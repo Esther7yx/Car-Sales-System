@@ -1,0 +1,529 @@
+2025-12-16T19:34:02.656+08:00  INFO 24096 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 25.0.1 with PID 24096 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2025-12-16T19:34:02.659+08:00 DEBUG 24096 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2025-12-16T19:34:02.662+08:00  INFO 24096 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-12-16T19:34:04.672+08:00  INFO 24096 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-12-16T19:34:04.694+08:00  INFO 24096 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-16T19:34:04.695+08:00  INFO 24096 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-12-16T19:34:04.880+08:00  INFO 24096 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-12-16T19:34:04.881+08:00  INFO 24096 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2115 ms
+2025-12-16T19:34:06.348+08:00  INFO 24096 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-16T19:34:07.478+08:00 ERROR 24096 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
+
+java.sql.SQLException: Unsupported character encoding 'utf8mb4'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:130) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:98) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:90) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:64) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:74) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:85) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:442) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:239) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:188) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-5.0.1.jar:na]
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:159) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:117) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.init.DatabasePopulatorUtils.execute(DatabasePopulatorUtils.java:52) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer.runScripts(DataSourceScriptDatabaseInitializer.java:87) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.runScripts(AbstractScriptDatabaseInitializer.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applyScripts(AbstractScriptDatabaseInitializer.java:108) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applySchemaScripts(AbstractScriptDatabaseInitializer.java:98) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.initializeDatabase(AbstractScriptDatabaseInitializer.java:76) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.afterPropertiesSet(AbstractScriptDatabaseInitializer.java:66) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1816) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1766) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:520) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:973) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:941) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:608) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:733) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:435) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:311) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1305) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1294) ~[spring-boot-3.1.0.jar:3.1.0]
+	at com.carsale.CarSaleApplication.main(CarSaleApplication.java:19) ~[classes/:na]
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Unsupported character encoding 'utf8mb4'
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483) ~[na:na]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:236) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.JdbcPropertySetImpl.postInitialization(JdbcPropertySetImpl.java:66) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.DefaultPropertySet.initializeProperties(DefaultPropertySet.java:231) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:388) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 39 common frames omitted
+Caused by: java.io.UnsupportedEncodingException: utf8mb4
+	at java.base/java.lang.String.lookupCharset(String.java:863) ~[na:na]
+	at java.base/java.lang.String.getBytes(String.java:1843) ~[na:na]
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:234) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 42 common frames omitted
+
+2025-12-16T19:34:07.492+08:00  WARN 24096 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Failed to execute database script
+2025-12-16T19:34:07.500+08:00  INFO 24096 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-12-16T19:34:07.528+08:00  INFO 24096 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-12-16T19:34:07.558+08:00 ERROR 24096 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Failed to execute database script
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1770) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:520) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:973) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:941) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:608) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:733) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:435) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:311) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1305) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1294) ~[spring-boot-3.1.0.jar:3.1.0]
+	at com.carsale.CarSaleApplication.main(CarSaleApplication.java:19) ~[classes/:na]
+Caused by: org.springframework.jdbc.datasource.init.UncategorizedScriptException: Failed to execute database script
+	at org.springframework.jdbc.datasource.init.DatabasePopulatorUtils.execute(DatabasePopulatorUtils.java:67) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer.runScripts(DataSourceScriptDatabaseInitializer.java:87) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.runScripts(AbstractScriptDatabaseInitializer.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applyScripts(AbstractScriptDatabaseInitializer.java:108) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applySchemaScripts(AbstractScriptDatabaseInitializer.java:98) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.initializeDatabase(AbstractScriptDatabaseInitializer.java:76) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.afterPropertiesSet(AbstractScriptDatabaseInitializer.java:66) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1816) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1766) ~[spring-beans-6.0.9.jar:6.0.9]
+	... 18 common frames omitted
+Caused by: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:83) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.init.DatabasePopulatorUtils.execute(DatabasePopulatorUtils.java:52) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	... 26 common frames omitted
+Caused by: java.sql.SQLException: Unsupported character encoding 'utf8mb4'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:130) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:98) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:90) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:64) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:74) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:85) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:442) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:239) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:188) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-5.0.1.jar:na]
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:159) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:117) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	... 27 common frames omitted
+Caused by: com.mysql.cj.exceptions.WrongArgumentException: Unsupported character encoding 'utf8mb4'
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499) ~[na:na]
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483) ~[na:na]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:62) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:105) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:236) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.JdbcPropertySetImpl.postInitialization(JdbcPropertySetImpl.java:66) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.conf.DefaultPropertySet.initializeProperties(DefaultPropertySet.java:231) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:388) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 39 common frames omitted
+Caused by: java.io.UnsupportedEncodingException: utf8mb4
+	at java.base/java.lang.String.lookupCharset(String.java:863) ~[na:na]
+	at java.base/java.lang.String.getBytes(String.java:1843) ~[na:na]
+	at com.mysql.cj.util.StringUtils.getBytes(StringUtils.java:234) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	... 42 common frames omitted
+
+2025-12-16T19:34:33.320+08:00  INFO 29904 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 25.0.1 with PID 29904 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2025-12-16T19:34:33.324+08:00 DEBUG 29904 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2025-12-16T19:34:33.326+08:00  INFO 29904 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-12-16T19:34:35.353+08:00  INFO 29904 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-12-16T19:34:35.394+08:00  INFO 29904 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-16T19:34:35.394+08:00  INFO 29904 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-12-16T19:34:35.609+08:00  INFO 29904 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-12-16T19:34:35.610+08:00  INFO 29904 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2181 ms
+2025-12-16T19:34:37.030+08:00  INFO 29904 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-16T19:34:38.314+08:00 ERROR 29904 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Exception during pool initialization.
+
+java.sql.SQLSyntaxErrorException: Unknown database 'car_sale_system'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:825) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:446) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:239) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:188) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-5.0.1.jar:na]
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:159) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:117) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.init.DatabasePopulatorUtils.execute(DatabasePopulatorUtils.java:52) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer.runScripts(DataSourceScriptDatabaseInitializer.java:87) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.runScripts(AbstractScriptDatabaseInitializer.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applyScripts(AbstractScriptDatabaseInitializer.java:108) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applySchemaScripts(AbstractScriptDatabaseInitializer.java:98) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.initializeDatabase(AbstractScriptDatabaseInitializer.java:76) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.afterPropertiesSet(AbstractScriptDatabaseInitializer.java:66) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1816) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1766) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:520) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:973) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:941) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:608) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:733) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:435) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:311) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1305) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1294) ~[spring-boot-3.1.0.jar:3.1.0]
+	at com.carsale.CarSaleApplication.main(CarSaleApplication.java:19) ~[classes/:na]
+
+2025-12-16T19:34:38.321+08:00  WARN 29904 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Failed to execute database script
+2025-12-16T19:34:38.329+08:00  INFO 29904 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-12-16T19:34:38.347+08:00  INFO 29904 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-12-16T19:34:38.380+08:00 ERROR 29904 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Failed to execute database script
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1770) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:520) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:973) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:941) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:608) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:733) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:435) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:311) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1305) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1294) ~[spring-boot-3.1.0.jar:3.1.0]
+	at com.carsale.CarSaleApplication.main(CarSaleApplication.java:19) ~[classes/:na]
+Caused by: org.springframework.jdbc.datasource.init.UncategorizedScriptException: Failed to execute database script
+	at org.springframework.jdbc.datasource.init.DatabasePopulatorUtils.execute(DatabasePopulatorUtils.java:67) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer.runScripts(DataSourceScriptDatabaseInitializer.java:87) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.runScripts(AbstractScriptDatabaseInitializer.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applyScripts(AbstractScriptDatabaseInitializer.java:108) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applySchemaScripts(AbstractScriptDatabaseInitializer.java:98) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.initializeDatabase(AbstractScriptDatabaseInitializer.java:76) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.afterPropertiesSet(AbstractScriptDatabaseInitializer.java:66) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1816) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1766) ~[spring-beans-6.0.9.jar:6.0.9]
+	... 18 common frames omitted
+Caused by: org.springframework.jdbc.CannotGetJdbcConnectionException: Failed to obtain JDBC Connection
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:83) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.init.DatabasePopulatorUtils.execute(DatabasePopulatorUtils.java:52) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	... 26 common frames omitted
+Caused by: java.sql.SQLSyntaxErrorException: Unknown database 'car_sale_system'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:825) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:446) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:239) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:188) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.zaxxer.hikari.util.DriverDataSource.getConnection(DriverDataSource.java:138) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newConnection(PoolBase.java:359) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.PoolBase.newPoolEntry(PoolBase.java:201) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.createPoolEntry(HikariPool.java:470) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.checkFailFast(HikariPool.java:561) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariPool.<init>(HikariPool.java:100) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.HikariDataSource.getConnection(HikariDataSource.java:112) ~[HikariCP-5.0.1.jar:na]
+	at org.springframework.jdbc.datasource.DataSourceUtils.fetchConnection(DataSourceUtils.java:159) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.DataSourceUtils.doGetConnection(DataSourceUtils.java:117) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.DataSourceUtils.getConnection(DataSourceUtils.java:80) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	... 27 common frames omitted
+
+2025-12-16T19:39:21.431+08:00  INFO 9948 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 25.0.1 with PID 9948 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2025-12-16T19:39:21.434+08:00 DEBUG 9948 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2025-12-16T19:39:21.436+08:00  INFO 9948 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-12-16T19:39:23.497+08:00  INFO 9948 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-12-16T19:39:23.525+08:00  INFO 9948 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-16T19:39:23.526+08:00  INFO 9948 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-12-16T19:39:23.744+08:00  INFO 9948 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-12-16T19:39:23.745+08:00  INFO 9948 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2209 ms
+2025-12-16T19:39:25.190+08:00  INFO 9948 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-16T19:39:25.472+08:00  INFO 9948 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3e28d779
+2025-12-16T19:39:25.475+08:00  INFO 9948 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-16T19:39:25.526+08:00  WARN 9948 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Failed to execute SQL script statement #2 of file [C:\Users\HP\Desktop\sale\backend\target\classes\mapper\create_procedures.sql]: DELIMITER $$ CREATE OR REPLACE PROCEDURE process_purchase_inventory( IN p_order_id INT, IN p_vin VARCHAR(17), IN p_warehouse_location VARCHAR(100), IN p_operator_id INT ) BEGIN DECLARE v_old_status ENUM('in_stock', 'sold', 'reserved', 'in_transit')
+2025-12-16T19:39:25.529+08:00  INFO 9948 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-12-16T19:39:25.538+08:00  INFO 9948 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-12-16T19:39:25.543+08:00  INFO 9948 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-12-16T19:39:25.563+08:00  INFO 9948 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-12-16T19:39:25.595+08:00 ERROR 9948 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Failed to execute SQL script statement #2 of file [C:\Users\HP\Desktop\sale\backend\target\classes\mapper\create_procedures.sql]: DELIMITER $$ CREATE OR REPLACE PROCEDURE process_purchase_inventory( IN p_order_id INT, IN p_vin VARCHAR(17), IN p_warehouse_location VARCHAR(100), IN p_operator_id INT ) BEGIN DECLARE v_old_status ENUM('in_stock', 'sold', 'reserved', 'in_transit')
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1770) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:520) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:973) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:941) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:608) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:733) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:435) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:311) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1305) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1294) ~[spring-boot-3.1.0.jar:3.1.0]
+	at com.carsale.CarSaleApplication.main(CarSaleApplication.java:19) ~[classes/:na]
+Caused by: org.springframework.jdbc.datasource.init.ScriptStatementFailedException: Failed to execute SQL script statement #2 of file [C:\Users\HP\Desktop\sale\backend\target\classes\mapper\create_procedures.sql]: DELIMITER $$ CREATE OR REPLACE PROCEDURE process_purchase_inventory( IN p_order_id INT, IN p_vin VARCHAR(17), IN p_warehouse_location VARCHAR(100), IN p_operator_id INT ) BEGIN DECLARE v_old_status ENUM('in_stock', 'sold', 'reserved', 'in_transit')
+	at org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScript(ScriptUtils.java:282) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.init.ResourceDatabasePopulator.populate(ResourceDatabasePopulator.java:254) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.init.DatabasePopulatorUtils.execute(DatabasePopulatorUtils.java:54) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer.runScripts(DataSourceScriptDatabaseInitializer.java:87) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.runScripts(AbstractScriptDatabaseInitializer.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applyScripts(AbstractScriptDatabaseInitializer.java:108) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applySchemaScripts(AbstractScriptDatabaseInitializer.java:98) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.initializeDatabase(AbstractScriptDatabaseInitializer.java:76) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.afterPropertiesSet(AbstractScriptDatabaseInitializer.java:66) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1816) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1766) ~[spring-beans-6.0.9.jar:6.0.9]
+	... 18 common frames omitted
+Caused by: java.sql.SQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'DELIMITER $$ CREATE OR REPLACE PROCEDURE process_purchase_inventory( IN p_order_' at line 1
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:121) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.StatementImpl.executeInternal(StatementImpl.java:763) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.StatementImpl.execute(StatementImpl.java:648) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-5.0.1.jar:na]
+	at org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScript(ScriptUtils.java:261) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	... 28 common frames omitted
+
+2025-12-16T19:39:59.029+08:00  INFO 31180 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 25.0.1 with PID 31180 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2025-12-16T19:39:59.033+08:00 DEBUG 31180 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2025-12-16T19:39:59.035+08:00  INFO 31180 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-12-16T19:40:01.030+08:00  INFO 31180 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-12-16T19:40:01.049+08:00  INFO 31180 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-16T19:40:01.050+08:00  INFO 31180 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-12-16T19:40:01.257+08:00  INFO 31180 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-12-16T19:40:01.258+08:00  INFO 31180 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2115 ms
+2025-12-16T19:40:02.719+08:00  INFO 31180 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-16T19:40:03.001+08:00  INFO 31180 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6d0290d8
+2025-12-16T19:40:03.005+08:00  INFO 31180 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-16T19:40:03.454+08:00  WARN 31180 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 1a09d028-a42e-4fc7-a894-c4ee80aa8925
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-12-16T19:40:03.675+08:00  INFO 31180 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@7767bd4e, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7708b66a, org.springframework.security.web.context.SecurityContextHolderFilter@1b46392c, org.springframework.security.web.header.HeaderWriterFilter@60deefed, org.springframework.security.web.csrf.CsrfFilter@7cf8f45a, org.springframework.security.web.authentication.logout.LogoutFilter@684ce74c, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@787178b1, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@101330ad, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@433ef204, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@573aeab2, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6f15f52a, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@787d1f9c, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@4dd2ef54, org.springframework.security.web.access.ExceptionTranslationFilter@7ac058a0, org.springframework.security.web.access.intercept.AuthorizationFilter@437281c5]
+2025-12-16T19:40:03.777+08:00  INFO 31180 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path '/api'
+2025-12-16T19:40:03.793+08:00  INFO 31180 --- [main] com.carsale.CarSaleApplication           : Started CarSaleApplication in 5.577 seconds (process running for 6.239)
+2025-12-16T19:41:17.519+08:00  INFO 31180 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-16T19:41:17.520+08:00  INFO 31180 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-16T19:41:17.521+08:00  INFO 31180 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-12-16T20:24:46.517+08:00  INFO 9588 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 25.0.1 with PID 9588 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2025-12-16T20:24:46.521+08:00 DEBUG 9588 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2025-12-16T20:24:46.523+08:00  INFO 9588 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-12-16T20:24:48.582+08:00  INFO 9588 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-12-16T20:24:48.604+08:00  INFO 9588 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-16T20:24:48.605+08:00  INFO 9588 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-12-16T20:24:48.789+08:00  INFO 9588 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-12-16T20:24:48.790+08:00  INFO 9588 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2167 ms
+2025-12-16T20:24:50.319+08:00  INFO 9588 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-12-16T20:24:50.595+08:00  INFO 9588 --- [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4b957db0
+2025-12-16T20:24:50.598+08:00  INFO 9588 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-12-16T20:24:50.968+08:00  WARN 9588 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Failed to execute SQL script statement #17 of file [C:\Users\HP\Desktop\sale\backend\target\classes\mapper\create_tables.sql]: INSERT INTO manufacturer (manufacturer_name, contact_person, contact_phone, address, cooperation_status) VALUES ('上海大众', '张三', '13800138001', '上海市浦东新区张江高科技园区', 'active'), ('一汽丰田', '李四', '13800138002', '吉林省长春市绿园区', 'active'), ('广州本田', '王五', '13800138003', '广东省广州市黄埔区', 'active')
+2025-12-16T20:24:50.972+08:00  INFO 9588 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-12-16T20:24:50.988+08:00  INFO 9588 --- [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-12-16T20:24:50.992+08:00  INFO 9588 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-12-16T20:24:51.015+08:00  INFO 9588 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-12-16T20:24:51.045+08:00 ERROR 9588 --- [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'dataSourceScriptDatabaseInitializer' defined in class path resource [org/springframework/boot/autoconfigure/sql/init/DataSourceInitializationConfiguration.class]: Failed to execute SQL script statement #17 of file [C:\Users\HP\Desktop\sale\backend\target\classes\mapper\create_tables.sql]: INSERT INTO manufacturer (manufacturer_name, contact_person, contact_phone, address, cooperation_status) VALUES ('上海大众', '张三', '13800138001', '上海市浦东新区张江高科技园区', 'active'), ('一汽丰田', '李四', '13800138002', '吉林省长春市绿园区', 'active'), ('广州本田', '王五', '13800138003', '广东省广州市黄埔区', 'active')
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1770) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:598) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:520) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:326) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:324) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:313) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:973) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:941) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:608) ~[spring-context-6.0.9.jar:6.0.9]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:733) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:435) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:311) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1305) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1294) ~[spring-boot-3.1.0.jar:3.1.0]
+	at com.carsale.CarSaleApplication.main(CarSaleApplication.java:19) ~[classes/:na]
+Caused by: org.springframework.jdbc.datasource.init.ScriptStatementFailedException: Failed to execute SQL script statement #17 of file [C:\Users\HP\Desktop\sale\backend\target\classes\mapper\create_tables.sql]: INSERT INTO manufacturer (manufacturer_name, contact_person, contact_phone, address, cooperation_status) VALUES ('上海大众', '张三', '13800138001', '上海市浦东新区张江高科技园区', 'active'), ('一汽丰田', '李四', '13800138002', '吉林省长春市绿园区', 'active'), ('广州本田', '王五', '13800138003', '广东省广州市黄埔区', 'active')
+	at org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScript(ScriptUtils.java:282) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.init.ResourceDatabasePopulator.populate(ResourceDatabasePopulator.java:254) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.jdbc.datasource.init.DatabasePopulatorUtils.execute(DatabasePopulatorUtils.java:54) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	at org.springframework.boot.jdbc.init.DataSourceScriptDatabaseInitializer.runScripts(DataSourceScriptDatabaseInitializer.java:87) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.runScripts(AbstractScriptDatabaseInitializer.java:146) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applyScripts(AbstractScriptDatabaseInitializer.java:108) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.applySchemaScripts(AbstractScriptDatabaseInitializer.java:98) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.initializeDatabase(AbstractScriptDatabaseInitializer.java:76) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.boot.sql.init.AbstractScriptDatabaseInitializer.afterPropertiesSet(AbstractScriptDatabaseInitializer.java:66) ~[spring-boot-3.1.0.jar:3.1.0]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1816) ~[spring-beans-6.0.9.jar:6.0.9]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1766) ~[spring-beans-6.0.9.jar:6.0.9]
+	... 18 common frames omitted
+Caused by: java.sql.SQLIntegrityConstraintViolationException: Duplicate entry '上海大众' for key 'manufacturer.manufacturer_name'
+	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:118) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:122) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.StatementImpl.executeInternal(StatementImpl.java:763) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.mysql.cj.jdbc.StatementImpl.execute(StatementImpl.java:648) ~[mysql-connector-j-8.0.33.jar:8.0.33]
+	at com.zaxxer.hikari.pool.ProxyStatement.execute(ProxyStatement.java:94) ~[HikariCP-5.0.1.jar:na]
+	at com.zaxxer.hikari.pool.HikariProxyStatement.execute(HikariProxyStatement.java) ~[HikariCP-5.0.1.jar:na]
+	at org.springframework.jdbc.datasource.init.ScriptUtils.executeSqlScript(ScriptUtils.java:261) ~[spring-jdbc-6.0.9.jar:6.0.9]
+	... 28 common frames omitted
+
+2025-12-16T20:25:37.330+08:00  INFO 22668 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 25.0.1 with PID 22668 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2025-12-16T20:25:37.335+08:00 DEBUG 22668 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2025-12-16T20:25:37.337+08:00  INFO 22668 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-12-16T20:25:39.898+08:00  INFO 22668 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-12-16T20:25:39.924+08:00  INFO 22668 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-16T20:25:39.925+08:00  INFO 22668 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-12-16T20:25:40.183+08:00  INFO 22668 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-12-16T20:25:40.183+08:00  INFO 22668 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2744 ms
+2025-12-16T20:25:41.787+08:00  WARN 22668 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 502cbb61-3c64-43b8-b695-667784c60f2d
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-12-16T20:25:41.982+08:00  INFO 22668 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@14fc9bd, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@7ed49a7f, org.springframework.security.web.context.SecurityContextHolderFilter@7fe8c7db, org.springframework.security.web.header.HeaderWriterFilter@266e9dda, org.springframework.security.web.csrf.CsrfFilter@57fdb8a4, org.springframework.security.web.authentication.logout.LogoutFilter@646427f7, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@74960e9d, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@74c9e11, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@1cd6b1bd, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@d5e575c, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@541afb85, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@31b0f02, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@443cdaa4, org.springframework.security.web.access.ExceptionTranslationFilter@38a4e2b0, org.springframework.security.web.access.intercept.AuthorizationFilter@3c88191b]
+2025-12-16T20:25:42.081+08:00  WARN 22668 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-12-16T20:25:42.094+08:00  INFO 22668 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-12-16T20:25:42.121+08:00  INFO 22668 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-12-16T20:25:42.151+08:00 ERROR 22668 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2025-12-16T20:26:30.645+08:00  INFO 17140 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 25.0.1 with PID 17140 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2025-12-16T20:26:30.648+08:00 DEBUG 17140 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2025-12-16T20:26:30.650+08:00  INFO 17140 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-12-16T20:26:32.610+08:00  INFO 17140 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-12-16T20:26:32.630+08:00  INFO 17140 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-16T20:26:32.630+08:00  INFO 17140 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-12-16T20:26:32.812+08:00  INFO 17140 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-12-16T20:26:32.813+08:00  INFO 17140 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2062 ms
+2025-12-16T20:26:34.336+08:00  WARN 17140 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 7863469c-f3ea-44c2-bb37-76ed63127ae4
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-12-16T20:26:34.540+08:00  INFO 17140 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@2f95653f, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4052b19f, org.springframework.security.web.context.SecurityContextHolderFilter@66e827a8, org.springframework.security.web.header.HeaderWriterFilter@475f5672, org.springframework.security.web.csrf.CsrfFilter@35e98af, org.springframework.security.web.authentication.logout.LogoutFilter@541afb85, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@9fe720a, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@3ebc955b, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@3dc68586, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@6221b13b, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@6a55594b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@17222c11, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@60dc1a4e, org.springframework.security.web.access.ExceptionTranslationFilter@67688110, org.springframework.security.web.access.intercept.AuthorizationFilter@74c9e11]
+2025-12-16T20:26:34.661+08:00  INFO 17140 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path '/api'
+2025-12-16T20:26:34.676+08:00  INFO 17140 --- [main] com.carsale.CarSaleApplication           : Started CarSaleApplication in 4.856 seconds (process running for 5.504)
+2025-12-16T20:27:08.386+08:00  INFO 17140 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-16T20:27:08.387+08:00  INFO 17140 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-16T20:27:08.388+08:00  INFO 17140 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2025-12-16T20:30:04.895+08:00  INFO 5024 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 25.0.1 with PID 5024 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2025-12-16T20:30:04.898+08:00 DEBUG 5024 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2025-12-16T20:30:04.901+08:00  INFO 5024 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-12-16T20:30:07.003+08:00  INFO 5024 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-12-16T20:30:07.024+08:00  INFO 5024 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-16T20:30:07.025+08:00  INFO 5024 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-12-16T20:30:07.239+08:00  INFO 5024 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-12-16T20:30:07.240+08:00  INFO 5024 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2236 ms
+2025-12-16T20:30:08.784+08:00  WARN 5024 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: f8f2e4a0-2925-419c-84b9-e60ddff251aa
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-12-16T20:30:08.999+08:00  INFO 5024 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@14c99bf6, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@266e9dda, org.springframework.security.web.context.SecurityContextHolderFilter@79d7035, org.springframework.security.web.header.HeaderWriterFilter@650aa077, org.springframework.security.web.csrf.CsrfFilter@2ee39e73, org.springframework.security.web.authentication.logout.LogoutFilter@66e827a8, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@195113de, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@662be9f7, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@38883a31, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@739831a4, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5fffb692, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@126f8f24, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@27a6fef2, org.springframework.security.web.access.ExceptionTranslationFilter@6e1ae763, org.springframework.security.web.access.intercept.AuthorizationFilter@1f15e689]
+2025-12-16T20:30:09.101+08:00  WARN 5024 --- [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2025-12-16T20:30:09.109+08:00  INFO 5024 --- [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-12-16T20:30:09.130+08:00  INFO 5024 --- [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-12-16T20:30:09.164+08:00 ERROR 5024 --- [main] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+
+2025-12-16T20:32:28.111+08:00  INFO 31612 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 25.0.1 with PID 31612 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2025-12-16T20:32:28.117+08:00 DEBUG 31612 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2025-12-16T20:32:28.119+08:00  INFO 31612 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2025-12-16T20:32:30.828+08:00  INFO 31612 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2025-12-16T20:32:30.855+08:00  INFO 31612 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-12-16T20:32:30.856+08:00  INFO 31612 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2025-12-16T20:32:31.165+08:00  INFO 31612 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring embedded WebApplicationContext
+2025-12-16T20:32:31.165+08:00  INFO 31612 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2916 ms
+2025-12-16T20:32:33.429+08:00  WARN 31612 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 1e7dc231-535e-4d87-a2c9-ef21919d9738
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-12-16T20:32:33.688+08:00  INFO 31612 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@380ce5a3, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@38029686, org.springframework.security.web.context.SecurityContextHolderFilter@17222c11, org.springframework.security.web.header.HeaderWriterFilter@632b305d, org.springframework.security.web.csrf.CsrfFilter@4fecf308, org.springframework.security.web.authentication.logout.LogoutFilter@44b940a2, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@4844930a, org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter@66d25ba9, org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter@7d9c45ee, org.springframework.security.web.authentication.www.BasicAuthenticationFilter@60dc1a4e, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@25974207, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@21a46ff1, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@31da0434, org.springframework.security.web.access.ExceptionTranslationFilter@5bb911c1, org.springframework.security.web.access.intercept.AuthorizationFilter@f723cdb]
+2025-12-16T20:32:33.837+08:00  INFO 31612 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path '/api'
+2025-12-16T20:32:33.858+08:00  INFO 31612 --- [main] com.carsale.CarSaleApplication           : Started CarSaleApplication in 6.875 seconds (process running for 7.862)
+2025-12-16T20:34:18.553+08:00  INFO 31612 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/api]    : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-12-16T20:34:18.554+08:00  INFO 31612 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-12-16T20:34:18.557+08:00  INFO 31612 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms

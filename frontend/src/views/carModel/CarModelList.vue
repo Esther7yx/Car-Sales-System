@@ -1,0 +1,275 @@
+<template>
+  <div class="car-model-list-container">
+    <!-- 页面标题和操作按钮 -->
+    <div class="page-header">
+      <h1>车型管理</h1>
+      <el-button type="primary" @click="goToAdd">添加车型</el-button>
+    </div>
+
+    <!-- 搜索和筛选区域 -->
+    <div class="search-container">
+      <el-form :inline="true" :model="searchForm" class="search-form">
+        <el-form-item label="车型名称">
+          <el-input v-model="searchForm.modelName" placeholder="请输入车型名称" clearable />
+        </el-form-item>
+        <el-form-item label="所属厂商">
+          <el-select v-model="searchForm.manufacturerId" placeholder="请选择厂商" clearable>
+            <el-option
+              v-for="manufacturer in manufacturerList"
+              :key="manufacturer.manufacturerId"
+              :label="manufacturer.manufacturerName"
+              :value="manufacturer.manufacturerId"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="车型状态">
+          <el-select v-model="searchForm.status" placeholder="请选择车型状态" clearable>
+            <el-option label="在售" value="on_sale" />
+            <el-option label="停售" value="discontinued" />
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleSearch">搜索</el-button>
+          <el-button @click="handleReset">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
+
+    <!-- 数据表格 -->
+    <div class="table-container">
+      <el-table :data="tableData" stripe border style="width: 100%">
+        <el-table-column prop="modelId" label="车型ID" width="80" align="center" />
+        <el-table-column prop="modelName" label="车型名称" width="180" />
+        <el-table-column prop="manufacturerName" label="所属厂商" width="150" />
+        <el-table-column prop="brand" label="品牌" width="120" />
+        <el-table-column prop="type" label="车型类型" width="120">
+          <template #default="scope">
+            {{ formatCarType(scope.row.type) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="engine" label="发动机型号" width="180" />
+        <el-table-column prop="transmission" label="变速箱" width="120" />
+        <el-table-column prop="price" label="指导价格(元)" width="150" align="right">
+          <template #default="scope">
+            {{ scope.row.price ? scope.row.price.toLocaleString() : '-' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="车型状态" width="120" align="center">
+          <template #default="scope">
+            <el-tag :type="scope.row.status === 'on_sale' ? 'success' : 'danger'">
+              {{ scope.row.status === 'on_sale' ? '在售' : '停售' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="createdTime" label="创建时间" width="180" align="center" />
+        <el-table-column label="操作" width="200" align="center" fixed="right">
+          <template #default="scope">
+            <el-button type="primary" size="small" @click="goToEdit(scope.row.modelId)">
+              编辑
+            </el-button>
+            <el-button type="danger" size="small" @click="handleDelete(scope.row.modelId)">
+              删除
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+
+    <!-- 分页组件 -->
+    <div class="pagination-container">
+      <el-pagination
+        v-model:current-page="pagination.currentPage"
+        v-model:page-size="pagination.pageSize"
+        :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="pagination.total"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { get, del } from '../../utils/request'
+import { ElMessage, ElMessageBox } from 'element-plus'
+
+const router = useRouter()
+
+// 表格数据
+const tableData = ref([])
+
+// 厂商列表（用于下拉选择）
+const manufacturerList = ref([])
+
+// 搜索表单
+const searchForm = ref({
+  modelName: '',
+  manufacturerId: '',
+  status: ''
+})
+
+// 分页参数
+const pagination = ref({
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
+
+// 车型类型映射
+const carTypeMap = {
+  'sedan': '轿车',
+  'suv': 'SUV',
+  'mpv': 'MPV',
+  'hatchback': '两厢车',
+  'coupe': '跑车',
+  'pickup': '皮卡',
+  'electric': '电动车'
+}
+
+// 页面加载时获取数据
+onMounted(() => {
+  fetchManufacturers()
+  fetchData()
+})
+
+// 获取厂商列表（用于搜索条件）
+const fetchManufacturers = async () => {
+  try {
+    const response = await get('/manufacturers')
+    manufacturerList.value = response.data
+  } catch (error) {
+    ElMessage.error('获取厂商列表失败')
+    console.error('获取厂商列表失败:', error)
+  }
+}
+
+// 获取车型数据
+const fetchData = async () => {
+  try {
+    const params = {
+      current: pagination.value.currentPage,
+      size: pagination.value.pageSize,
+      modelName: searchForm.value.modelName,
+      manufacturerId: searchForm.value.manufacturerId,
+      status: searchForm.value.status
+    }
+    const response = await get('/car-models/page', params)
+    tableData.value = response.data.records
+    pagination.value.total = response.data.total
+  } catch (error) {
+    ElMessage.error('获取车型列表失败')
+    console.error('获取车型列表失败:', error)
+  }
+}
+
+// 格式化车型类型
+const formatCarType = (type) => {
+  return carTypeMap[type] || type
+}
+
+// 搜索
+const handleSearch = () => {
+  pagination.value.currentPage = 1
+  fetchData()
+}
+
+// 重置
+const handleReset = () => {
+  searchForm.value = {
+    modelName: '',
+    manufacturerId: '',
+    status: ''
+  }
+  pagination.value.currentPage = 1
+  fetchData()
+}
+
+// 分页大小变化
+const handleSizeChange = (size) => {
+  pagination.value.pageSize = size
+  fetchData()
+}
+
+// 当前页变化
+const handleCurrentChange = (current) => {
+  pagination.value.currentPage = current
+  fetchData()
+}
+
+// 跳转到添加页面
+const goToAdd = () => {
+  router.push('/car-models/add')
+}
+
+// 跳转到编辑页面
+const goToEdit = (id) => {
+  router.push(`/car-models/edit/${id}`)
+}
+
+// 删除车型
+const handleDelete = (id) => {
+  ElMessageBox.confirm('确定要删除该车型吗？', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    try {
+      await del(`/car-models/${id}`)
+      ElMessage.success('删除成功')
+      fetchData()
+    } catch (error) {
+      ElMessage.error('删除失败')
+      console.error('删除车型失败:', error)
+    }
+  }).catch(() => {
+    // 取消删除操作
+  })
+}
+</script>
+
+<style scoped>
+.car-model-list-container {
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.page-header h1 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #303133;
+  margin: 0;
+}
+
+.search-container {
+  margin-bottom: 20px;
+  padding: 15px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.search-form {
+  display: flex;
+  align-items: center;
+}
+
+.table-container {
+  margin-bottom: 20px;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carsale.mapper.VehicleMapper">
+
+    <!-- 基础结果集映射 -->
+    <resultMap id="BaseResultMap" type="com.carsale.entity.Vehicle">
+        <id column="vin" property="vin" jdbcType="VARCHAR"/>
+        <result column="model_id" property="modelId" jdbcType="INTEGER"/>
+        <result column="color" property="color" jdbcType="VARCHAR"/>
+        <result column="year" property="year" jdbcType="INTEGER"/>
+        <result column="mileage" property="mileage" jdbcType="DOUBLE"/>
+        <result column="purchase_price" property="purchasePrice" jdbcType="DECIMAL"/>
+        <result column="sale_price" property="salePrice" jdbcType="DECIMAL"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="purchase_date" property="purchaseDate" jdbcType="TIMESTAMP"/>
+        <result column="sale_date" property="saleDate" jdbcType="TIMESTAMP"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <!-- 包含车型和厂商信息的结果集映射 -->
+    <resultMap id="VehicleWithDetailsResultMap" type="com.carsale.entity.Vehicle" extends="BaseResultMap">
+        <!-- 车型信息 -->
+        <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
+        <result column="model_code" property="modelCode" jdbcType="VARCHAR"/>
+        <result column="manufacturer_id" property="manufacturerId" jdbcType="INTEGER"/>
+        <result column="model_status" property="modelStatus" jdbcType="VARCHAR"/>
+        <!-- 厂商信息 -->
+        <result column="manufacturer_name" property="manufacturerName" jdbcType="VARCHAR"/>
+        <result column="manufacturer_code" property="manufacturerCode" jdbcType="VARCHAR"/>
+        <result column="cooperation_status" property="cooperationStatus" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <!-- 分页查询车辆信息，包含车型和厂商关联 -->
+    <select id="selectPageWithDetails" resultMap="VehicleWithDetailsResultMap">
+        SELECT 
+            v.*, 
+            cm.model_name, 
+            cm.model_code, 
+            cm.manufacturer_id, 
+            cm.status AS model_status, 
+            m.manufacturer_name, 
+            m.manufacturer_code, 
+            m.cooperation_status
+        FROM vehicle v
+        LEFT JOIN car_model cm ON v.model_id = cm.model_id
+        LEFT JOIN manufacturer m ON cm.manufacturer_id = m.manufacturer_id
+        WHERE 1=1
+        <if test="vin != null and vin != ''">
+            AND v.vin LIKE CONCAT('%', #{vin}, '%')
+        </if>
+        <if test="status != null and status != ''">
+            AND v.status = #{status}
+        </if>
+        <if test="modelId != null">
+            AND v.model_id = #{modelId}
+        </if>
+        <if test="color != null and color != ''">
+            AND v.color LIKE CONCAT('%', #{color}, '%')
+        </if>
+        ORDER BY v.created_at DESC
+    </select>
+
+    <!-- 根据车型ID查询车辆列表 -->
+    <select id="selectByModelId" resultMap="BaseResultMap">
+        SELECT * FROM vehicle
+        WHERE model_id = #{modelId}
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- 查询当前库存车辆（在库状态） -->
+    <select id="selectCurrentInventory" resultMap="VehicleWithDetailsResultMap">
+        SELECT 
+            v.*, 
+            cm.model_name, 
+            cm.model_code, 
+            cm.manufacturer_id, 
+            cm.status AS model_status, 
+            m.manufacturer_name, 
+            m.manufacturer_code, 
+            m.cooperation_status
+        FROM vehicle v
+        LEFT JOIN car_model cm ON v.model_id = cm.model_id
+        LEFT JOIN manufacturer m ON cm.manufacturer_id = m.manufacturer_id
+        WHERE v.status = 'in_stock'
+        ORDER BY v.created_at DESC
+    </select>
+
+    <!-- 根据VIN码更新车辆状态 -->
+    <update id="updateStatusByVin">
+        UPDATE vehicle
+        SET status = #{status}
+        WHERE vin = #{vin}
+    </update>
+
+</mapper>
