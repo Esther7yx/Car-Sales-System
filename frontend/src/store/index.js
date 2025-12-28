@@ -28,6 +28,11 @@ export const useUserStore = defineStore('user', () => {
     localStorage.removeItem('token')
   }
 
+  // 退出登录
+  const logout = () => {
+    clearUserInfo()
+  }
+
   // 判断是否登录
   const isLoggedIn = computed(() => {
     return !!token.value && !!userInfo.value
@@ -39,7 +44,8 @@ export const useUserStore = defineStore('user', () => {
     isLoggedIn,
     setUserInfo,
     setToken,
-    clearUserInfo
+    clearUserInfo,
+    logout
   }
 })
 

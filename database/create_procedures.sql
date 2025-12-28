@@ -1,112 +1,67 @@
--- 使用数据库
 USE car_sale_system;
 
 -- 存储过程1：采购入库处理流程
--- 输入参数：采购订单ID、车辆VIN、仓库位置
--- 处理逻辑：更新车辆状态、记录库存流水、更新采购订单状态
--- 事务控制：整个过程在单个事务中完成
+DROP PROCEDURE IF EXISTS process_purchase_inventory;
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE process_purchase_inventory(
+CREATE PROCEDURE process_purchase_inventory(
     IN p_order_id INT,
     IN p_vin VARCHAR(17),
     IN p_warehouse_location VARCHAR(100),
     IN p_operator_id INT
 )
 BEGIN
-    -- 声明变量
     DECLARE v_old_status ENUM('in_stock', 'sold', 'reserved', 'in_transit');
     DECLARE v_model_id INT;
     DECLARE v_total_received INT;
     DECLARE v_total_order INT;
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- 发生异常时回滚事务
         ROLLBACK;
-        -- 抛出错误信息
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = '采购入库处理失败，请检查参数和数据完整性';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Purchase inventory process failed';
     END;
 
-    -- 开始事务
     START TRANSACTION;
 
-    -- 1. 获取车辆当前状态
     SELECT status, model_id INTO v_old_status, v_model_id
     FROM vehicle WHERE vin = p_vin FOR UPDATE;
 
-    -- 检查车辆是否存在
     IF v_old_status IS NULL THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = '车辆不存在';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Vehicle not found';
     END IF;
 
-    -- 2. 更新车辆状态和位置
     UPDATE vehicle 
-    SET 
-        status = 'in_stock',
-        warehouse_location = p_warehouse_location,
-        purchase_date = CURRENT_DATE
+    SET status = 'in_stock', warehouse_location = p_warehouse_location, purchase_date = CURRENT_DATE
     WHERE vin = p_vin;
 
-    -- 3. 记录库存流水
-    INSERT INTO inventory_log (
-        vin, 
-        action_type, 
-        old_status, 
-        new_status, 
-        old_location, 
-        new_location, 
-        operator_id, 
-        remark
-    ) VALUES (
-        p_vin, 
-        'in', 
-        v_old_status, 
-        'in_stock', 
-        NULL, 
-        p_warehouse_location, 
-        p_operator_id, 
-        CONCAT('采购入库，订单ID:', p_order_id)
-    );
+    INSERT INTO inventory_log (vin, action_type, old_status, new_status, new_location, operator_id, remark) 
+    VALUES (p_vin, 'in', v_old_status, 'in_stock', p_warehouse_location, p_operator_id, CONCAT('Purchase In, OrderID:', p_order_id));
 
-    -- 4. 检查采购订单是否所有车辆都已入库
-    SELECT COUNT(*) INTO v_total_order
-    FROM purchase_order_detail WHERE order_id = p_order_id;
+    SELECT COUNT(*) INTO v_total_order FROM purchase_order_detail WHERE order_id = p_order_id;
 
     SELECT COUNT(DISTINCT v.vin) INTO v_total_received
     FROM purchase_order_detail pod
     INNER JOIN vehicle v ON v.model_id = pod.model_id
     WHERE pod.order_id = p_order_id AND v.status = 'in_stock';
 
-    -- 5. 如果所有车辆都已入库，更新采购订单状态为已收货
     IF v_total_received >= v_total_order THEN
-        UPDATE purchase_order 
-        SET 
-            status = 'received',
-            receive_time = CURRENT_TIMESTAMP
-        WHERE order_id = p_order_id;
+        UPDATE purchase_order SET status = 'received', receive_time = CURRENT_TIMESTAMP WHERE order_id = p_order_id;
     END IF;
 
-    -- 提交事务
     COMMIT;
-
-    -- 返回成功信息
-    SELECT '采购入库处理成功' AS result;
+    SELECT 'Success' AS result;
 END $$
 DELIMITER ;
 
 -- 存储过程2：销售订单处理流程
--- 业务场景：处理完整的销售业务
--- 关键技术：库存检查（防超卖）、价格计算、状态更新
--- 异常处理：完善的错误处理和回滚机制
+DROP PROCEDURE IF EXISTS process_sale_order;
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE process_sale_order(
+CREATE PROCEDURE process_sale_order(
     IN p_customer_id INT,
     IN p_operator_id INT,
     IN p_payment_method ENUM('cash', 'loan', 'installment'),
-    IN p_sale_items JSON -- 格式: [{"vin": "xxx", "unit_price": 100000, "discount": 5000}]
+    IN p_sale_items JSON
 )
 BEGIN
-    -- 声明变量
     DECLARE v_sale_id INT;
     DECLARE v_order_number VARCHAR(50);
     DECLARE v_total_amount DECIMAL(12, 2) DEFAULT 0;
@@ -117,25 +72,21 @@ BEGIN
     DECLARE v_item_count INT;
     DECLARE v_current_item INT DEFAULT 0;
     DECLARE v_vehicle_status ENUM('in_stock', 'sold', 'reserved', 'in_transit');
+    -- 【修复点1】新增变量用于存储错误信息
+    DECLARE v_error_msg VARCHAR(255);
+    
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- 发生异常时回滚事务
         ROLLBACK;
-        -- 抛出错误信息
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = '销售订单处理失败，请检查参数和数据完整性';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Sale order process failed';
     END;
 
-    -- 开始事务
     START TRANSACTION;
 
-    -- 1. 生成销售订单号
     SET v_order_number = CONCAT('SO_', DATE_FORMAT(CURRENT_DATE, '%Y%m%d'), '_', LPAD(FLOOR(RAND() * 10000), 4, '0'));
-
-    -- 2. 计算总金额
     SET v_item_count = JSON_LENGTH(p_sale_items);
+    
     WHILE v_current_item < v_item_count DO
-        SET v_vin = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].vin')));
         SET v_unit_price = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].unit_price')));
         SET v_discount = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].discount')));
         SET v_subtotal = v_unit_price - IFNULL(v_discount, 0);
@@ -143,85 +94,45 @@ BEGIN
         SET v_current_item = v_current_item + 1;
     END WHILE;
 
-    -- 3. 创建销售订单
-    INSERT INTO sale_order (
-        order_number, 
-        customer_id, 
-        operator_id, 
-        total_amount, 
-        payment_method, 
-        status
-    ) VALUES (
-        v_order_number, 
-        p_customer_id, 
-        p_operator_id, 
-        v_total_amount, 
-        p_payment_method, 
-        'pending'
-    );
+    INSERT INTO sale_order (order_number, customer_id, operator_id, total_amount, payment_method, status) 
+    VALUES (v_order_number, p_customer_id, p_operator_id, v_total_amount, p_payment_method, 'pending');
 
-    -- 获取销售订单ID
     SET v_sale_id = LAST_INSERT_ID();
-
-    -- 4. 处理销售明细
     SET v_current_item = 0;
+
     WHILE v_current_item < v_item_count DO
         SET v_vin = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].vin')));
         SET v_unit_price = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].unit_price')));
         SET v_discount = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].discount')));
         SET v_subtotal = v_unit_price - IFNULL(v_discount, 0);
 
-        -- 检查车辆状态
-        SELECT status INTO v_vehicle_status
-        FROM vehicle WHERE vin = v_vin FOR UPDATE;
+        SELECT status INTO v_vehicle_status FROM vehicle WHERE vin = v_vin FOR UPDATE;
 
         IF v_vehicle_status != 'in_stock' THEN
-            SIGNAL SQLSTATE '45000' 
-            SET MESSAGE_TEXT = CONCAT('车辆', v_vin, '状态异常，无法销售');
+            -- 【修复点2】先拼接字符串存入变量，再抛出异常
+            SET v_error_msg = CONCAT('Error: Vehicle ', v_vin, ' status abnormal');
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = v_error_msg;
         END IF;
 
-        -- 插入销售明细
-        INSERT INTO sale_detail (
-            sale_id, 
-            vin, 
-            unit_price, 
-            discount, 
-            quantity, 
-            subtotal
-        ) VALUES (
-            v_sale_id, 
-            v_vin, 
-            v_unit_price, 
-            IFNULL(v_discount, 0), 
-            1, 
-            v_subtotal
-        );
-
-        -- 更新车辆状态（这个会由触发器自动处理）
-        -- UPDATE vehicle SET status = 'sold', sale_date = CURRENT_DATE WHERE vin = v_vin;
+        INSERT INTO sale_detail (sale_id, vin, unit_price, discount, quantity, subtotal) 
+        VALUES (v_sale_id, v_vin, v_unit_price, IFNULL(v_discount, 0), 1, v_subtotal);
 
         SET v_current_item = v_current_item + 1;
     END WHILE;
 
-    -- 提交事务
     COMMIT;
-
-    -- 返回销售订单ID
     SELECT v_sale_id AS sale_id, v_order_number AS order_number;
 END $$
 DELIMITER ;
 
 -- 存储过程3：月度报表生成
--- 执行时机：每月初自动生成上月报表
--- 输出内容：销售汇总、利润分析、库存状况
--- 数据落地：生成结果存储到报表历史表
+DROP PROCEDURE IF EXISTS generate_monthly_report;
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE generate_monthly_report(
+CREATE PROCEDURE generate_monthly_report(
     IN p_year INT,
     IN p_month INT
 )
 BEGIN
-    -- 声明变量
     DECLARE v_report_date DATE;
     DECLARE v_start_date DATE;
     DECLARE v_end_date DATE;
@@ -235,22 +146,16 @@ BEGIN
     DECLARE v_inventory_value DECIMAL(15, 2);
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
-        -- 发生异常时回滚事务
         ROLLBACK;
-        -- 抛出错误信息
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = '月度报表生成失败';
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Monthly report generation failed';
     END;
 
-    -- 开始事务
     START TRANSACTION;
 
-    -- 1. 计算报表日期范围
     SET v_report_date = STR_TO_DATE(CONCAT(p_year, '-', p_month, '-01'), '%Y-%m-%d');
     SET v_start_date = v_report_date;
     SET v_end_date = LAST_DAY(v_report_date);
 
-    -- 2. 创建报表历史表（如果不存在）
     CREATE TABLE IF NOT EXISTS monthly_report_history (
         report_id INT PRIMARY KEY AUTO_INCREMENT,
         report_year INT NOT NULL,
@@ -265,78 +170,36 @@ BEGIN
         avg_days_in_stock DECIMAL(5, 2) NOT NULL,
         inventory_value DECIMAL(15, 2) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE KEY uk_report_year_month (report_year, report_month),
-        INDEX idx_report_date (report_date)
+        UNIQUE KEY uk_report_year_month (report_year, report_month)
     );
 
-    -- 3. 获取销售统计数据
     SELECT 
-        COUNT(DISTINCT so.sale_id),
-        COUNT(sd.vin),
-        COALESCE(SUM(sd.subtotal), 0),
+        COUNT(DISTINCT so.sale_id), COUNT(sd.vin), COALESCE(SUM(sd.subtotal), 0),
         COALESCE(SUM(sd.subtotal - v.purchase_price), 0),
         CASE WHEN SUM(sd.subtotal) > 0 THEN ROUND((SUM(sd.subtotal - v.purchase_price) / SUM(sd.subtotal)) * 100, 2) ELSE 0 END
-    INTO 
-        v_order_count,
-        v_vehicle_count,
-        v_total_sales,
-        v_total_profit,
-        v_avg_profit_margin
+    INTO v_order_count, v_vehicle_count, v_total_sales, v_total_profit, v_avg_profit_margin
     FROM sale_order so
     LEFT JOIN sale_detail sd ON so.sale_id = sd.sale_id
     LEFT JOIN vehicle v ON sd.vin = v.vin
-    WHERE so.status = 'delivered' 
-    AND so.create_time BETWEEN v_start_date AND DATE_ADD(v_end_date, INTERVAL 1 DAY);
+    WHERE so.status = 'delivered' AND so.create_time BETWEEN v_start_date AND DATE_ADD(v_end_date, INTERVAL 1 DAY);
 
-    -- 4. 获取库存统计数据
-    SELECT 
-        COUNT(*),
-        ROUND(AVG(DATEDIFF(v_report_date, v.purchase_date)), 2),
-        COALESCE(SUM(v.sale_price), 0)
-    INTO 
-        v_current_stock,
-        v_avg_days_in_stock,
-        v_inventory_value
+    SELECT COUNT(*), ROUND(AVG(DATEDIFF(v_report_date, v.purchase_date)), 2), COALESCE(SUM(v.sale_price), 0)
+    INTO v_current_stock, v_avg_days_in_stock, v_inventory_value
     FROM vehicle v
-    WHERE v.status = 'in_stock'
-    AND v.purchase_date <= v_end_date;
+    WHERE v.status = 'in_stock' AND v.purchase_date <= v_end_date;
 
-    -- 5. 插入或更新报表数据
     INSERT INTO monthly_report_history (
-        report_year, report_month, report_date, 
-        order_count, vehicle_count, total_sales, total_profit, avg_profit_margin,
-        current_stock, avg_days_in_stock, inventory_value
+        report_year, report_month, report_date, order_count, vehicle_count, total_sales, total_profit, 
+        avg_profit_margin, current_stock, avg_days_in_stock, inventory_value
     ) VALUES (
-        p_year, p_month, v_report_date,
-        v_order_count, v_vehicle_count, v_total_sales, v_total_profit, v_avg_profit_margin,
-        v_current_stock, v_avg_days_in_stock, v_inventory_value
+        p_year, p_month, v_report_date, v_order_count, v_vehicle_count, v_total_sales, v_total_profit, 
+        v_avg_profit_margin, v_current_stock, v_avg_days_in_stock, v_inventory_value
     ) ON DUPLICATE KEY UPDATE
-        report_date = v_report_date,
-        order_count = v_order_count,
-        vehicle_count = v_vehicle_count,
-        total_sales = v_total_sales,
-        total_profit = v_total_profit,
-        avg_profit_margin = v_avg_profit_margin,
-        current_stock = v_current_stock,
-        avg_days_in_stock = v_avg_days_in_stock,
-        inventory_value = v_inventory_value,
-        created_at = CURRENT_TIMESTAMP;
+        report_date = v_report_date, order_count = v_order_count, vehicle_count = v_vehicle_count,
+        total_sales = v_total_sales, total_profit = v_total_profit, avg_profit_margin = v_avg_profit_margin,
+        current_stock = v_current_stock, avg_days_in_stock = v_avg_days_in_stock, inventory_value = v_inventory_value;
 
-    -- 提交事务
     COMMIT;
-
-    -- 返回报表数据
-    SELECT 
-        p_year AS report_year,
-        p_month AS report_month,
-        v_report_date AS report_date,
-        v_order_count AS order_count,
-        v_vehicle_count AS vehicle_count,
-        v_total_sales AS total_sales,
-        v_total_profit AS total_profit,
-        v_avg_profit_margin AS avg_profit_margin,
-        v_current_stock AS current_stock,
-        v_avg_days_in_stock AS avg_days_in_stock,
-        v_inventory_value AS inventory_value;
+    SELECT p_year, p_month, v_order_count, v_total_sales;
 END $$
 DELIMITER ;

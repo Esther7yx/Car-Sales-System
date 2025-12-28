@@ -1,0 +1,21 @@
+# 后端 Maven 编译产物
+backend/target/
+*.jar
+*.war
+
+# 日志文件（所有目录下的日志都排除）
+**/logs/
+*.log
+*.log.*.gz
+*.log.*.zip
+
+# 前端 Node.js 依赖与构建缓存
+frontend/node_modules/
+frontend/.vite/
+frontend/dist/
+
+# 通用开发工具忽略项（可选，按需添加）
+.idea/
+.vscode/
+*.iml
+.DS_Store

@@ -1,13 +1,21 @@
 <template>
   <div id="app">
-    <router-view />
+    <MainLayout v-if="isAuthenticated" />
+    <router-view v-else />
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App'
-}
+<script setup>
+import { computed } from 'vue'
+import { useUserStore } from './store'
+import MainLayout from './layouts/MainLayout.vue'
+
+const userStore = useUserStore()
+
+// 检查用户是否已认证
+const isAuthenticated = computed(() => {
+  return userStore.token && userStore.token !== ''
+})
 </script>
 
 <style>

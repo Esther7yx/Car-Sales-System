@@ -2,6 +2,26 @@
 CREATE DATABASE IF NOT EXISTS car_sale_system DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE car_sale_system;
 
+-- 【新增】先禁用外键检查，强制删除所有旧表，防止重复和冲突
+SET FOREIGN_KEY_CHECKS=0;
+DROP TABLE IF EXISTS purchase_order_detail;
+DROP TABLE IF EXISTS operation_log;
+DROP TABLE IF EXISTS inventory_log;
+DROP TABLE IF EXISTS permission;
+DROP TABLE IF EXISTS system_user;
+DROP TABLE IF EXISTS sale_detail;
+DROP TABLE IF EXISTS sale_order;
+DROP TABLE IF EXISTS purchase_order;
+DROP TABLE IF EXISTS customer;
+DROP TABLE IF EXISTS vehicle;
+DROP TABLE IF EXISTS car_model;
+DROP TABLE IF EXISTS manufacturer;
+-- 【新增】删除审计日志表（之前触发器里创建的）
+DROP TABLE IF EXISTS audit_log;
+-- 【新增】删除报表历史表（之前存储过程里创建的）
+DROP TABLE IF EXISTS monthly_report_history;
+SET FOREIGN_KEY_CHECKS=1;
+
 -- 1. 厂商信息表 (manufacturer)
 CREATE TABLE IF NOT EXISTS manufacturer (
     manufacturer_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -13,7 +33,10 @@ CREATE TABLE IF NOT EXISTS manufacturer (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_manufacturer_status (cooperation_status)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 2. 车型信息表 (car_model)
 CREATE TABLE IF NOT EXISTS car_model (
@@ -32,7 +55,10 @@ CREATE TABLE IF NOT EXISTS car_model (
     UNIQUE KEY uk_model_manufacturer_year (manufacturer_id, model_name, year),
     INDEX idx_model_year (year),
     INDEX idx_model_guide_price (guide_price)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 3. 车辆信息表 (vehicle) - 核心表
 CREATE TABLE IF NOT EXISTS vehicle (
@@ -51,7 +77,10 @@ CREATE TABLE IF NOT EXISTS vehicle (
     INDEX idx_vehicle_status (status),
     INDEX idx_vehicle_purchase_date (purchase_date),
     INDEX idx_vehicle_sale_date (sale_date)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 4. 客户信息表 (customer)
 CREATE TABLE IF NOT EXISTS customer (
@@ -68,7 +97,10 @@ CREATE TABLE IF NOT EXISTS customer (
     UNIQUE KEY uk_customer_id_number (id_number),
     INDEX idx_customer_type (customer_type),
     INDEX idx_customer_credit_rating (credit_rating)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 5. 采购订单表 (purchase_order)
 CREATE TABLE IF NOT EXISTS purchase_order (
@@ -83,10 +115,12 @@ CREATE TABLE IF NOT EXISTS purchase_order (
     receive_time TIMESTAMP DEFAULT NULL,
     cancel_time TIMESTAMP DEFAULT NULL,
     FOREIGN KEY (manufacturer_id) REFERENCES manufacturer(manufacturer_id) ON DELETE CASCADE,
-    -- FOREIGN KEY (operator_id) REFERENCES system_user(user_id) ON DELETE CASCADE, -- 暂时注释，等待system_user表创建
     INDEX idx_order_status (status),
     INDEX idx_order_create_time (create_time)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 6. 销售订单表 (sale_order)
 CREATE TABLE IF NOT EXISTS sale_order (
@@ -102,11 +136,13 @@ CREATE TABLE IF NOT EXISTS sale_order (
     delivery_time TIMESTAMP DEFAULT NULL,
     cancel_time TIMESTAMP DEFAULT NULL,
     FOREIGN KEY (customer_id) REFERENCES customer(customer_id) ON DELETE CASCADE,
-    -- FOREIGN KEY (operator_id) REFERENCES system_user(user_id) ON DELETE CASCADE, -- 暂时注释，等待system_user表创建
     INDEX idx_sale_status (status),
     INDEX idx_sale_create_time (create_time),
     INDEX idx_sale_payment_method (payment_method)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 7. 销售明细表 (sale_detail)
 CREATE TABLE IF NOT EXISTS sale_detail (
@@ -122,7 +158,10 @@ CREATE TABLE IF NOT EXISTS sale_detail (
     UNIQUE KEY uk_sale_vin (sale_id, vin),
     CHECK (discount >= 0 AND discount <= unit_price),
     CHECK (subtotal = unit_price - discount)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 8. 系统用户表 (system_user)
 CREATE TABLE IF NOT EXISTS system_user (
@@ -137,7 +176,10 @@ CREATE TABLE IF NOT EXISTS system_user (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_user_role (role),
     INDEX idx_user_status (status)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 9. 权限表 (permission)
 CREATE TABLE IF NOT EXISTS permission (
@@ -148,7 +190,10 @@ CREATE TABLE IF NOT EXISTS permission (
     description VARCHAR(200) DEFAULT NULL,
     UNIQUE KEY uk_role_resource_action (role, resource, action),
     INDEX idx_permission_role (role)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 10. 库存流水表 (inventory_log)
 CREATE TABLE IF NOT EXISTS inventory_log (
@@ -166,7 +211,10 @@ CREATE TABLE IF NOT EXISTS inventory_log (
     FOREIGN KEY (operator_id) REFERENCES system_user(user_id) ON DELETE CASCADE,
     INDEX idx_log_action_type (action_type),
     INDEX idx_log_created_at (created_at)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 11. 操作日志表 (operation_log)
 CREATE TABLE IF NOT EXISTS operation_log (
@@ -184,7 +232,10 @@ CREATE TABLE IF NOT EXISTS operation_log (
     INDEX idx_log_operation_type (operation_type),
     INDEX idx_log_table_name (table_name),
     INDEX idx_log_created_at (created_at)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 12. 采购订单明细表 (purchase_order_detail)
 CREATE TABLE IF NOT EXISTS purchase_order_detail (
@@ -198,20 +249,21 @@ CREATE TABLE IF NOT EXISTS purchase_order_detail (
     FOREIGN KEY (model_id) REFERENCES car_model(model_id) ON DELETE CASCADE,
     UNIQUE KEY uk_order_model (order_id, model_id),
     CHECK (subtotal = unit_price * quantity)
-);
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4
+COLLATE=utf8mb4_unicode_ci;
 
 -- 现在添加之前注释的外键约束
 ALTER TABLE purchase_order ADD FOREIGN KEY (operator_id) REFERENCES system_user(user_id) ON DELETE CASCADE;
 ALTER TABLE sale_order ADD FOREIGN KEY (operator_id) REFERENCES system_user(user_id) ON DELETE CASCADE;
 
 -- 添加一些示例数据
--- 厂商数据
 INSERT INTO manufacturer (manufacturer_name, contact_person, contact_phone, address, cooperation_status) VALUES
 ('上海大众', '张三', '13800138001', '上海市浦东新区张江高科技园区', 'active'),
 ('一汽丰田', '李四', '13800138002', '吉林省长春市绿园区', 'active'),
 ('广州本田', '王五', '13800138003', '广东省广州市黄埔区', 'active');
 
--- 车型数据
 INSERT INTO car_model (manufacturer_id, model_name, year, engine_type, transmission, fuel_type, guide_price, features) VALUES
 (1, '帕萨特', 2023, '1.4T', '7速双离合', '汽油', 189900.00, '{"seats": 5, "safety": ["ABS", "ESP"], "comfort": ["自动空调", "真皮座椅"]}'),
 (1, '途观L', 2023, '2.0T', '7速双离合', '汽油', 215800.00, '{"seats": 5, "safety": ["ABS", "ESP", "气囊×6"], "comfort": ["全景天窗", "电动座椅"]}'),
@@ -219,15 +271,13 @@ INSERT INTO car_model (manufacturer_id, model_name, year, engine_type, transmiss
 (2, '凯美瑞', 2023, '2.0L', 'CVT', '汽油', 179800.00, '{"seats": 5, "safety": ["ABS", "ESP", "气囊×8"], "comfort": ["自动空调", "真皮座椅"]}'),
 (3, '雅阁', 2023, '1.5T', 'CVT', '汽油', 169800.00, '{"seats": 5, "safety": ["ABS", "ESP", "气囊×6"], "comfort": ["自动空调", "真皮座椅"]}');
 
--- 系统用户数据
 INSERT INTO system_user (username, password, real_name, role, status) VALUES
-('admin', 'admin123', '系统管理员', 'admin', 'active'),
-('sales001', 'sales123', '销售员小李', 'sales', 'active'),
-('warehouse001', 'warehouse123', '仓库管理员小王', 'warehouse', 'active'),
-('finance001', 'finance123', '财务小张', 'finance', 'active'),
-('manager001', 'manager123', '经理老刘', 'manager', 'active');
+('admin', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '系统管理员', 'admin', 'active'),
+('sales001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '销售员小李', 'sales', 'active'),
+('warehouse001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '仓库管理员小王', 'warehouse', 'active'),
+('finance001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '财务小张', 'finance', 'active'),
+('manager001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '经理老刘', 'manager', 'active');
 
--- 权限数据
 INSERT INTO permission (role, resource, action, description) VALUES
 ('admin', 'manufacturer', 'read', '查看厂商信息'),
 ('admin', 'manufacturer', 'create', '创建厂商信息'),

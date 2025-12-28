@@ -153,7 +153,7 @@ onMounted(() => {
 // 获取车型列表（用于搜索条件）
 const fetchCarModels = async () => {
   try {
-    const response = await get('/car-models')
+    const response = await get('/api/car-models')
     carModelList.value = response.data
   } catch (error) {
     ElMessage.error('获取车型列表失败')
@@ -172,7 +172,7 @@ const fetchData = async () => {
       status: searchForm.value.status,
       color: searchForm.value.color
     }
-    const response = await get('/vehicles/page', params)
+    const response = await get('/api/vehicles/page', params)
     tableData.value = response.data.records
     pagination.value.total = response.data.total
   } catch (error) {

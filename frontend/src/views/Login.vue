@@ -53,7 +53,7 @@ const handleLogin = async () => {
     loading.value = true
     
     // 调用登录接口
-    const res = await post('/login', loginForm)
+    const res = await post('/api/login', loginForm)
     
     // 保存用户信息和token
     userStore.setToken(res.data.token)

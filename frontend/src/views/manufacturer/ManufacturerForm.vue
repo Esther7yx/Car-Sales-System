@@ -152,7 +152,7 @@ onMounted(() => {
 // 获取厂商数据（编辑模式）
 const fetchManufacturerData = async () => {
   try {
-    const response = await get(`/manufacturers/${route.params.id}`)
+    const response = await get(`/api/manufacturer/${route.params.id}`)
     Object.assign(formData, response.data)
   } catch (error) {
     ElMessage.error('获取厂商信息失败')
@@ -170,11 +170,11 @@ const handleSubmit = async () => {
       try {
         if (isEdit.value) {
           // 编辑模式
-          await put(`/manufacturers/${formData.manufacturerId}`, formData)
+          await put(`/api/manufacturer/${formData.manufacturerId}`, formData)
           ElMessage.success('编辑厂商成功')
         } else {
           // 添加模式
-          await post('/manufacturers', formData)
+          await post('/api/manufacturer', formData)
           ElMessage.success('添加厂商成功')
         }
         router.push('/manufacturers')

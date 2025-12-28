@@ -10,7 +10,7 @@ import axios from 'axios'
 const app = createApp(App)
 
 // 配置Axios全局实例
-axios.defaults.baseURL = 'http://localhost:8080/api'
+axios.defaults.baseURL = ''
 axios.defaults.timeout = 10000
 
 // 请求拦截器

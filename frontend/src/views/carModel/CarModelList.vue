@@ -138,7 +138,7 @@ onMounted(() => {
 // 获取厂商列表（用于搜索条件）
 const fetchManufacturers = async () => {
   try {
-    const response = await get('/manufacturers')
+    const response = await get('/api/manufacturer/page', { current: 1, size: 1000 })
     manufacturerList.value = response.data
   } catch (error) {
     ElMessage.error('获取厂商列表失败')
@@ -156,7 +156,7 @@ const fetchData = async () => {
       manufacturerId: searchForm.value.manufacturerId,
       status: searchForm.value.status
     }
-    const response = await get('/car-models/page', params)
+    const response = await get('/api/car-models/page', params)
     tableData.value = response.data.records
     pagination.value.total = response.data.total
   } catch (error) {

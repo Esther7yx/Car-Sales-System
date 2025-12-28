@@ -5,7 +5,7 @@ import { useUserStore } from '../store'
 
 // 创建axios实例
 const request = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: '', // 使用相对路径，由Vite代理转发
   timeout: 10000
 })
 

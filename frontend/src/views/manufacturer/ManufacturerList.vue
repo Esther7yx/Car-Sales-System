@@ -108,7 +108,7 @@ const fetchData = async () => {
       manufacturerName: searchForm.value.manufacturerName,
       cooperationStatus: searchForm.value.cooperationStatus
     }
-    const response = await get('/manufacturers/page', params)
+    const response = await get('/api/manufacturer/page', params)
     tableData.value = response.data.records
     pagination.value.total = response.data.total
   } catch (error) {
@@ -163,7 +163,7 @@ const handleDelete = (id) => {
     type: 'warning'
   }).then(async () => {
     try {
-      await del(`/manufacturers/${id}`)
+      await del(`/api/manufacturer/${id}`)
       ElMessage.success('删除成功')
       fetchData()
     } catch (error) {
