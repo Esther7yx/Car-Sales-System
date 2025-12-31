@@ -1,3 +1,10 @@
+-- 设置会话字符集
+SET NAMES utf8mb4;
+SET CHARACTER SET utf8mb4;
+SET character_set_connection=utf8mb4;
+SET character_set_results=utf8mb4;
+SET character_set_client=utf8mb4;
+
 -- 创建数据库
 CREATE DATABASE IF NOT EXISTS car_sale_system DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE car_sale_system;
@@ -25,24 +32,21 @@ SET FOREIGN_KEY_CHECKS=1;
 -- 1. 厂商信息表 (manufacturer)
 CREATE TABLE IF NOT EXISTS manufacturer (
     manufacturer_id INT PRIMARY KEY AUTO_INCREMENT,
-    manufacturer_name VARCHAR(100) NOT NULL UNIQUE,
-    contact_person VARCHAR(50) NOT NULL,
-    contact_phone VARCHAR(20) NOT NULL,
-    address VARCHAR(200) NOT NULL,
+    manufacturer_name VARCHAR(200) NOT NULL UNIQUE,
+    contact_person VARCHAR(100) NOT NULL,
+    contact_phone VARCHAR(30) NOT NULL,
+    address VARCHAR(1000) NOT NULL,
     cooperation_status ENUM('active', 'inactive', 'suspended') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_manufacturer_status (cooperation_status)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 2. 车型信息表 (car_model)
 CREATE TABLE IF NOT EXISTS car_model (
     model_id INT PRIMARY KEY AUTO_INCREMENT,
     manufacturer_id INT NOT NULL,
-    model_name VARCHAR(100) NOT NULL,
+    model_name VARCHAR(500) NOT NULL,
     year INT NOT NULL,
     engine_type VARCHAR(50) NOT NULL,
     transmission VARCHAR(50) NOT NULL,
@@ -55,10 +59,7 @@ CREATE TABLE IF NOT EXISTS car_model (
     UNIQUE KEY uk_model_manufacturer_year (manufacturer_id, model_name, year),
     INDEX idx_model_year (year),
     INDEX idx_model_guide_price (guide_price)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 3. 车辆信息表 (vehicle) - 核心表
 CREATE TABLE IF NOT EXISTS vehicle (
@@ -77,30 +78,24 @@ CREATE TABLE IF NOT EXISTS vehicle (
     INDEX idx_vehicle_status (status),
     INDEX idx_vehicle_purchase_date (purchase_date),
     INDEX idx_vehicle_sale_date (sale_date)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 4. 客户信息表 (customer)
 CREATE TABLE IF NOT EXISTS customer (
     customer_id INT PRIMARY KEY AUTO_INCREMENT,
     customer_type ENUM('individual', 'enterprise') NOT NULL DEFAULT 'individual',
-    name VARCHAR(100) NOT NULL,
-    id_number VARCHAR(100) NOT NULL, -- 身份证号或统一信用代码，加密存储
-    phone VARCHAR(20) NOT NULL,
-    email VARCHAR(100) DEFAULT NULL,
-    address VARCHAR(200) DEFAULT NULL,
+    name VARCHAR(200) NOT NULL,
+    id_number VARCHAR(200) NOT NULL, -- 身份证号或统一信用代码，加密存储
+    phone VARCHAR(30) NOT NULL,
+    email VARCHAR(200) DEFAULT NULL,
+    address VARCHAR(1000) DEFAULT NULL,
     credit_rating ENUM('A', 'B', 'C', 'D') DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY uk_customer_id_number (id_number),
     INDEX idx_customer_type (customer_type),
     INDEX idx_customer_credit_rating (credit_rating)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 5. 采购订单表 (purchase_order)
 CREATE TABLE IF NOT EXISTS purchase_order (
@@ -117,10 +112,7 @@ CREATE TABLE IF NOT EXISTS purchase_order (
     FOREIGN KEY (manufacturer_id) REFERENCES manufacturer(manufacturer_id) ON DELETE CASCADE,
     INDEX idx_order_status (status),
     INDEX idx_order_create_time (create_time)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 6. 销售订单表 (sale_order)
 CREATE TABLE IF NOT EXISTS sale_order (
@@ -139,10 +131,7 @@ CREATE TABLE IF NOT EXISTS sale_order (
     INDEX idx_sale_status (status),
     INDEX idx_sale_create_time (create_time),
     INDEX idx_sale_payment_method (payment_method)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 7. 销售明细表 (sale_detail)
 CREATE TABLE IF NOT EXISTS sale_detail (
@@ -158,17 +147,14 @@ CREATE TABLE IF NOT EXISTS sale_detail (
     UNIQUE KEY uk_sale_vin (sale_id, vin),
     CHECK (discount >= 0 AND discount <= unit_price),
     CHECK (subtotal = unit_price - discount)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 8. 系统用户表 (system_user)
 CREATE TABLE IF NOT EXISTS system_user (
     user_id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(100) NOT NULL, -- 加密存储
-    real_name VARCHAR(50) NOT NULL,
+    real_name VARCHAR(200) NOT NULL,
     role ENUM('admin', 'sales', 'warehouse', 'finance', 'manager') NOT NULL,
     status ENUM('active', 'inactive', 'locked') NOT NULL DEFAULT 'active',
     last_login_time TIMESTAMP DEFAULT NULL,
@@ -176,24 +162,18 @@ CREATE TABLE IF NOT EXISTS system_user (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_user_role (role),
     INDEX idx_user_status (status)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 9. 权限表 (permission)
 CREATE TABLE IF NOT EXISTS permission (
     permission_id INT PRIMARY KEY AUTO_INCREMENT,
     role ENUM('admin', 'sales', 'warehouse', 'finance', 'manager') NOT NULL,
-    resource VARCHAR(50) NOT NULL,
-    action VARCHAR(20) NOT NULL,
-    description VARCHAR(200) DEFAULT NULL,
+    resource VARCHAR(100) NOT NULL,
+    action VARCHAR(50) NOT NULL,
+    description VARCHAR(1000) DEFAULT NULL,
     UNIQUE KEY uk_role_resource_action (role, resource, action),
     INDEX idx_permission_role (role)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 10. 库存流水表 (inventory_log)
 CREATE TABLE IF NOT EXISTS inventory_log (
@@ -202,19 +182,16 @@ CREATE TABLE IF NOT EXISTS inventory_log (
     action_type ENUM('in', 'out', 'status_change', 'location_change') NOT NULL,
     old_status ENUM('in_stock', 'sold', 'reserved', 'in_transit') DEFAULT NULL,
     new_status ENUM('in_stock', 'sold', 'reserved', 'in_transit') DEFAULT NULL,
-    old_location VARCHAR(100) DEFAULT NULL,
-    new_location VARCHAR(100) DEFAULT NULL,
+    old_location VARCHAR(200) DEFAULT NULL,
+    new_location VARCHAR(200) DEFAULT NULL,
     operator_id INT NOT NULL,
-    remark VARCHAR(200) DEFAULT NULL,
+    remark VARCHAR(1000) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (vin) REFERENCES vehicle(vin) ON DELETE CASCADE,
     FOREIGN KEY (operator_id) REFERENCES system_user(user_id) ON DELETE CASCADE,
     INDEX idx_log_action_type (action_type),
     INDEX idx_log_created_at (created_at)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 11. 操作日志表 (operation_log)
 CREATE TABLE IF NOT EXISTS operation_log (
@@ -232,10 +209,7 @@ CREATE TABLE IF NOT EXISTS operation_log (
     INDEX idx_log_operation_type (operation_type),
     INDEX idx_log_table_name (table_name),
     INDEX idx_log_created_at (created_at)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 12. 采购订单明细表 (purchase_order_detail)
 CREATE TABLE IF NOT EXISTS purchase_order_detail (
@@ -249,10 +223,7 @@ CREATE TABLE IF NOT EXISTS purchase_order_detail (
     FOREIGN KEY (model_id) REFERENCES car_model(model_id) ON DELETE CASCADE,
     UNIQUE KEY uk_order_model (order_id, model_id),
     CHECK (subtotal = unit_price * quantity)
-)
-ENGINE=InnoDB
-DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mb4_unicode_ci;
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- 现在添加之前注释的外键约束
 ALTER TABLE purchase_order ADD FOREIGN KEY (operator_id) REFERENCES system_user(user_id) ON DELETE CASCADE;
