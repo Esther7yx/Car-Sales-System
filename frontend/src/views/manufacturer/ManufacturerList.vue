@@ -1,12 +1,10 @@
 <template>
   <div class="manufacturer-list-container">
-    <!-- 页面标题和操作按钮 -->
     <div class="page-header">
       <h1>厂商管理</h1>
       <el-button type="primary" @click="goToAdd">添加厂商</el-button>
     </div>
 
-    <!-- 搜索和筛选区域 -->
     <div class="search-container">
       <el-form :inline="true" :model="searchForm" class="search-form">
         <el-form-item label="厂商名称">
@@ -15,7 +13,7 @@
         <el-form-item label="合作状态">
           <el-select v-model="searchForm.cooperationStatus" placeholder="请选择合作状态" clearable>
             <el-option label="合作中" value="active" />
-            <el-option label="已终止" value="terminated" />
+            <el-option label="已终止" value="inactive" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -25,7 +23,6 @@
       </el-form>
     </div>
 
-    <!-- 数据表格 -->
     <div class="table-container">
       <el-table :data="tableData" stripe border style="width: 100%">
         <el-table-column prop="manufacturerId" label="厂商ID" width="80" align="center" />
@@ -41,7 +38,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createdTime" label="创建时间" width="180" align="center" />
+        <el-table-column prop="createdAt" label="创建时间" width="180" align="center" />
         <el-table-column label="操作" width="200" align="center" fixed="right">
           <template #default="scope">
             <el-button type="primary" size="small" @click="goToEdit(scope.row.manufacturerId)">
@@ -55,16 +52,15 @@
       </el-table>
     </div>
 
-    <!-- 分页组件 -->
     <div class="pagination-container">
       <el-pagination
-        v-model:current-page="pagination.currentPage"
-        v-model:page-size="pagination.pageSize"
-        :page-sizes="[10, 20, 50, 100]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pagination.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
+          v-model:current-page="pagination.currentPage"
+          v-model:page-size="pagination.pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pagination.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
       />
     </div>
   </div>
@@ -74,7 +70,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { get, del } from '../../utils/request'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 const router = useRouter()
 

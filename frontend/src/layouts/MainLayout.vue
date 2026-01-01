@@ -1,35 +1,26 @@
 <template>
   <div class="main-layout">
-    <!-- 侧边栏 -->
     <div class="sidebar" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
       <div class="sidebar-header">
-        <h2 v-if="!sidebarCollapsed">汽车销售系统</h2>
-        <h2 v-else>汽车</h2>
-        <el-button 
-          type="text" 
-          class="toggle-btn"
-          @click="toggleSidebar"
-        >
-          <el-icon>
-            <Fold v-if="!sidebarCollapsed" />
-            <Expand v-else />
-          </el-icon>
-        </el-button>
+        <h2 v-if="!sidebarCollapsed" class="logo-title">🚗 汽车销售系统</h2>
+        <h2 v-else class="logo-title">🚗</h2>
       </div>
-      
-      <!-- 导航菜单 -->
+
       <el-menu
-        :default-active="activeMenu"
-        :collapse="sidebarCollapsed"
-        :collapse-transition="false"
-        router
-        class="sidebar-menu"
+          :default-active="activeMenu"
+          :collapse="sidebarCollapsed"
+          :collapse-transition="false"
+          background-color="#001529"
+          text-color="#bfcbd9"
+          active-text-color="#409EFF"
+          router
+          class="sidebar-menu"
       >
         <el-menu-item index="/dashboard">
-          <el-icon><TrendCharts /></el-icon>
-          <span>系统概览</span>
+          <el-icon><Odometer /></el-icon>
+          <template #title>系统概览</template>
         </el-menu-item>
-        
+
         <el-sub-menu index="manufacturer">
           <template #title>
             <el-icon><OfficeBuilding /></el-icon>
@@ -38,16 +29,16 @@
           <el-menu-item index="/manufacturers">厂商列表</el-menu-item>
           <el-menu-item index="/manufacturers/add">添加厂商</el-menu-item>
         </el-sub-menu>
-        
+
         <el-sub-menu index="car-model">
           <template #title>
-            <el-icon><Van /></el-icon>
+            <el-icon><SetUp /></el-icon>
             <span>车型管理</span>
           </template>
           <el-menu-item index="/car-models">车型列表</el-menu-item>
           <el-menu-item index="/car-models/add">添加车型</el-menu-item>
         </el-sub-menu>
-        
+
         <el-sub-menu index="vehicle">
           <template #title>
             <el-icon><Van /></el-icon>
@@ -58,19 +49,29 @@
         </el-sub-menu>
       </el-menu>
     </div>
-    
-    <!-- 主内容区域 -->
-    <div class="main-content" :class="{ 'content-collapsed': sidebarCollapsed }">
-      <!-- 顶部导航栏 -->
+
+    <div class="main-content">
       <div class="header">
         <div class="header-left">
-          <span class="page-title">{{ pageTitle }}</span>
+          <el-icon
+              class="trigger-btn"
+              @click="toggleSidebar"
+          >
+            <Expand v-if="sidebarCollapsed" />
+            <Fold v-else />
+          </el-icon>
+          <el-breadcrumb separator="/">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>{{ pageTitle }}</el-breadcrumb-item>
+          </el-breadcrumb>
         </div>
+
         <div class="header-right">
-          <el-dropdown>
+          <el-dropdown trigger="click">
             <span class="user-info">
-              <el-avatar :size="32" :src="userAvatar" />
+              <el-avatar :size="32" :src="userAvatar" icon="UserFilled" />
               <span class="username">{{ userName }}</span>
+              <el-icon class="el-icon--right"><arrow-down /></el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
@@ -80,26 +81,31 @@
           </el-dropdown>
         </div>
       </div>
-      
-      <!-- 页面内容 -->
+
       <div class="content">
-        <router-view />
+        <router-view v-slot="{ Component }">
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useSystemStore } from '../store'
-import { useUserStore } from '../store'
-import { 
-  Fold, 
-  Expand, 
-  TrendCharts,
+import { useSystemStore, useUserStore } from '../store'
+import {
+  Fold,
+  Expand,
+  Odometer,
   OfficeBuilding,
-  Van 
+  Van,
+  SetUp,
+  ArrowDown,
+  UserFilled
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -110,11 +116,14 @@ const userStore = useUserStore()
 // 侧边栏折叠状态
 const sidebarCollapsed = computed(() => systemStore.sidebarCollapsed)
 
-// 当前激活的菜单
+// 当前激活的菜单 (根据路由路径高亮)
 const activeMenu = computed(() => route.path)
 
-// 页面标题
+// 页面标题 (从路由 meta 中获取，如果未定义则使用默认映射)
 const pageTitle = computed(() => {
+  if (route.meta && route.meta.title) {
+    return route.meta.title
+  }
   const routeName = route.name
   const titleMap = {
     'Dashboard': '系统概览',
@@ -128,12 +137,12 @@ const pageTitle = computed(() => {
     'VehicleAdd': '添加车辆',
     'VehicleEdit': '编辑车辆'
   }
-  return titleMap[routeName] || '汽车销售系统'
+  return titleMap[routeName] || '当前页面'
 })
 
 // 用户信息
-const userName = computed(() => userStore.userInfo?.username || '管理员')
-const userAvatar = computed(() => userStore.userInfo?.avatar || '')
+const userName = computed(() => userStore.userInfo?.realName || userStore.userInfo?.username || '管理员')
+const userAvatar = computed(() => '') // 如果有头像 URL 可在此处设置
 
 // 切换侧边栏
 const toggleSidebar = () => {
@@ -142,32 +151,28 @@ const toggleSidebar = () => {
 
 // 退出登录
 const handleLogout = () => {
-  userStore.clearUserInfo()
+  userStore.logout()
   router.push('/login')
 }
-
-onMounted(() => {
-  // 确保用户已登录
-  if (!userStore.token) {
-    router.push('/login')
-  }
-})
 </script>
 
 <style scoped>
 .main-layout {
   display: flex;
   height: 100vh;
-  background-color: #f5f7fa;
+  width: 100vw;
+  overflow: hidden;
 }
 
 /* 侧边栏样式 */
 .sidebar {
-  width: 240px;
+  width: 220px;
   background-color: #001529;
   color: #fff;
-  transition: width 0.3s ease;
-  overflow: hidden;
+  transition: width 0.3s;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0; /* 防止被压缩 */
 }
 
 .sidebar-collapsed {
@@ -175,55 +180,25 @@ onMounted(() => {
 }
 
 .sidebar-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-bottom: 1px solid #303030;
+  height: 60px;
+  line-height: 60px;
+  background-color: #002140;
+  text-align: center;
+  overflow: hidden;
 }
 
-.sidebar-header h2 {
+.logo-title {
   margin: 0;
   font-size: 18px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.toggle-btn {
-  color: #fff;
-  font-size: 18px;
+  color: white;
+  white-space: nowrap;
 }
 
 .sidebar-menu {
-  border: none;
-  background-color: transparent;
-}
-
-.sidebar-menu :deep(.el-menu-item),
-.sidebar-menu :deep(.el-sub-menu__title) {
-  color: #bfbfbf;
-  background-color: transparent;
-}
-
-.sidebar-menu :deep(.el-menu-item:hover),
-.sidebar-menu :deep(.el-sub-menu__title:hover) {
-  background-color: #1890ff;
-  color: #fff;
-}
-
-.sidebar-menu :deep(.el-menu-item.is-active) {
-  background-color: #1890ff;
-  color: #fff;
-}
-
-.sidebar-menu :deep(.el-icon) {
-  color: #bfbfbf;
-}
-
-.sidebar-menu :deep(.el-menu-item.is-active .el-icon),
-.sidebar-menu :deep(.el-menu-item:hover .el-icon),
-.sidebar-menu :deep(.el-sub-menu__title:hover .el-icon) {
-  color: #fff;
+  border-right: none;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* 主内容区域样式 */
@@ -231,53 +206,77 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  transition: margin-left 0.3s ease;
-}
-
-.content-collapsed {
-  margin-left: 0;
+  overflow: hidden; /* 防止主内容区出现双滚动条 */
+  background-color: #f0f2f5;
 }
 
 /* 头部样式 */
 .header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  height: 64px;
+  height: 60px;
   background-color: #fff;
+  border-bottom: 1px solid #dcdfe6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 }
 
-.page-title {
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.trigger-btn {
   font-size: 20px;
-  font-weight: 600;
-  color: #262626;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger-btn:hover {
+  color: #409EFF;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
 }
 
 .user-info {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 6px;
-  transition: background-color 0.3s;
+  padding: 5px;
+  border-radius: 4px;
 }
 
 .user-info:hover {
-  background-color: #f5f5f5;
+  background-color: #f6f6f6;
 }
 
 .username {
   margin-left: 8px;
+  margin-right: 8px;
   font-size: 14px;
-  color: #262626;
+  color: #333;
 }
 
 /* 内容区域 */
 .content {
   flex: 1;
-  padding: 24px;
-  overflow: auto;
+  padding: 20px;
+  overflow-y: auto; /* 内容过多时只在内部滚动 */
+}
+
+/* 路由切换动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

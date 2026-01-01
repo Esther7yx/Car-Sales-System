@@ -1,3 +1,4 @@
+com\carsale\config\WebConfig.class
 com\carsale\controller\VehicleController.class
 com\carsale\service\impl\SystemUserServiceImpl.class
 com\carsale\mapper\ManufacturerMapper.class

@@ -1,12 +1,10 @@
 <template>
   <div class="vehicle-list-container">
-    <!-- 页面标题和操作按钮 -->
     <div class="page-header">
       <h1>车辆管理</h1>
       <el-button type="primary" @click="goToAdd">添加车辆</el-button>
     </div>
 
-    <!-- 搜索和筛选区域 -->
     <div class="search-container">
       <el-form :inline="true" :model="searchForm" class="search-form">
         <el-form-item label="VIN码">
@@ -15,10 +13,10 @@
         <el-form-item label="车型">
           <el-select v-model="searchForm.modelId" placeholder="请选择车型" clearable>
             <el-option
-              v-for="carModel in carModelList"
-              :key="carModel.modelId"
-              :label="carModel.modelName"
-              :value="carModel.modelId"
+                v-for="carModel in carModelList"
+                :key="carModel.modelId"
+                :label="carModel.modelName"
+                :value="carModel.modelId"
             />
           </el-select>
         </el-form-item>
@@ -27,11 +25,8 @@
             <el-option label="在库" value="in_stock" />
             <el-option label="已售" value="sold" />
             <el-option label="预定" value="reserved" />
-            <el-option label="维修中" value="maintenance" />
+            <el-option label="在途" value="in_transit" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="颜色">
-          <el-input v-model="searchForm.color" placeholder="请输入颜色" clearable />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleSearch">搜索</el-button>
@@ -40,28 +35,42 @@
       </el-form>
     </div>
 
-    <!-- 数据表格 -->
     <div class="table-container">
       <el-table :data="tableData" stripe border style="width: 100%">
-        <el-table-column prop="vin" label="VIN码" width="180" />
-        <el-table-column prop="modelName" label="车型" width="150" />
-        <el-table-column prop="color" label="颜色" width="100" />
-        <el-table-column prop="year" label="年份" width="100" align="center" />
-        <el-table-column prop="mileage" label="里程(km)" width="120" align="right">
+        <el-table-column prop="vin" label="VIN码" width="180" fixed />
+
+        <el-table-column label="车型" width="150">
           <template #default="scope">
-            {{ scope.row.mileage || '-' }}
+            {{ scope.row.carModel ? scope.row.carModel.modelName : '-' }}
           </template>
         </el-table-column>
+
+        <el-table-column label="厂商" width="150">
+          <template #default="scope">
+            {{ scope.row.manufacturer ? scope.row.manufacturer.manufacturerName : '-' }}
+          </template>
+        </el-table-column>
+
+        <el-table-column label="年份" width="100" align="center">
+          <template #default="scope">
+            {{ scope.row.carModel ? scope.row.carModel.year : '-' }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="warehouseLocation" label="仓库位置" width="150" />
+
         <el-table-column prop="purchasePrice" label="进价(元)" width="120" align="right">
           <template #default="scope">
             {{ scope.row.purchasePrice ? scope.row.purchasePrice.toLocaleString() : '-' }}
           </template>
         </el-table-column>
+
         <el-table-column prop="salePrice" label="售价(元)" width="120" align="right">
           <template #default="scope">
             {{ scope.row.salePrice ? scope.row.salePrice.toLocaleString() : '-' }}
           </template>
         </el-table-column>
+
         <el-table-column prop="status" label="状态" width="100" align="center">
           <template #default="scope">
             <el-tag :type="getStatusType(scope.row.status)">
@@ -69,39 +78,51 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="purchaseDate" label="进货日期" width="180" align="center" />
-        <el-table-column prop="saleDate" label="销售日期" width="180" align="center" />
+
+        <el-table-column prop="purchaseDate" label="进货日期" width="120" align="center" />
+        <el-table-column prop="saleDate" label="销售日期" width="120" align="center" />
+
         <el-table-column label="操作" width="240" align="center" fixed="right">
           <template #default="scope">
-            <el-button type="primary" size="small" @click="goToEdit(scope.row.vin)">
-              编辑
-            </el-button>
-            <el-button type="success" size="small" @click="updateStatus(scope.row.vin, 'sold')"
-              :disabled="scope.row.status !== 'in_stock' && scope.row.status !== 'reserved'">
-              标记为已售
-            </el-button>
-            <el-button type="warning" size="small" @click="updateStatus(scope.row.vin, 'reserved')"
-              :disabled="scope.row.status !== 'in_stock'">
-              标记为预定
-            </el-button>
-            <el-button type="danger" size="small" @click="handleDelete(scope.row.vin)">
-              删除
-            </el-button>
+            <div v-if="scope.row.status !== 'sold'">
+              <el-button
+                  type="primary"
+                  size="small"
+                  @click="goToEdit(scope.row.vin)"
+              >
+                编辑
+              </el-button>
+
+              <el-button
+                  type="success"
+                  size="small"
+                  @click="updateStatus(scope.row.vin, 'sold')"
+              >
+                出售
+              </el-button>
+
+              <el-button
+                  type="danger"
+                  size="small"
+                  @click="handleDelete(scope.row.vin)"
+              >
+                删除
+              </el-button>
+            </div>
           </template>
         </el-table-column>
       </el-table>
     </div>
 
-    <!-- 分页组件 -->
     <div class="pagination-container">
       <el-pagination
-        v-model:current-page="pagination.currentPage"
-        v-model:page-size="pagination.pageSize"
-        :page-sizes="[10, 20, 50, 100]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="pagination.total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
+          v-model:current-page="pagination.currentPage"
+          v-model:page-size="pagination.pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pagination.total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
       />
     </div>
   </div>
@@ -117,18 +138,14 @@ const router = useRouter()
 
 // 表格数据
 const tableData = ref([])
-
-// 车型列表（用于下拉选择）
+// 车型列表
 const carModelList = ref([])
-
 // 搜索表单
 const searchForm = ref({
   vin: '',
   modelId: '',
-  status: '',
-  color: ''
+  status: ''
 })
-
 // 分页参数
 const pagination = ref({
   currentPage: 1,
@@ -136,120 +153,85 @@ const pagination = ref({
   total: 0
 })
 
-// 车辆状态映射
 const statusMap = {
   'in_stock': { text: '在库', type: 'success' },
   'sold': { text: '已售', type: 'info' },
   'reserved': { text: '预定', type: 'warning' },
-  'maintenance': { text: '维修中', type: 'danger' }
+  'in_transit': { text: '在途', type: 'primary' }
 }
 
-// 页面加载时获取数据
 onMounted(() => {
   fetchCarModels()
   fetchData()
 })
 
-// 获取车型列表（用于搜索条件）
 const fetchCarModels = async () => {
   try {
-    const response = await get('/api/car-models')
-    carModelList.value = response.data
+    const response = await get('/api/car-models/page', { current: 1, size: 100 })
+    carModelList.value = response.data.records
   } catch (error) {
     ElMessage.error('获取车型列表失败')
-    console.error('获取车型列表失败:', error)
   }
 }
 
-// 获取车辆数据
 const fetchData = async () => {
   try {
     const params = {
       current: pagination.value.currentPage,
       size: pagination.value.pageSize,
       vin: searchForm.value.vin,
-      modelId: searchForm.value.modelId,
-      status: searchForm.value.status,
-      color: searchForm.value.color
+      modelId: searchForm.value.modelId || undefined,
+      status: searchForm.value.status || undefined
     }
     const response = await get('/api/vehicles/page', params)
     tableData.value = response.data.records
     pagination.value.total = response.data.total
   } catch (error) {
     ElMessage.error('获取车辆列表失败')
-    console.error('获取车辆列表失败:', error)
   }
 }
 
-// 获取车辆状态文本
-const getStatusText = (status) => {
-  return statusMap[status]?.text || status
-}
+const getStatusText = (status) => statusMap[status]?.text || status
+const getStatusType = (status) => statusMap[status]?.type || 'default'
 
-// 获取车辆状态对应的标签类型
-const getStatusType = (status) => {
-  return statusMap[status]?.type || 'default'
-}
-
-// 搜索
 const handleSearch = () => {
   pagination.value.currentPage = 1
   fetchData()
 }
-
-// 重置
 const handleReset = () => {
-  searchForm.value = {
-    vin: '',
-    modelId: '',
-    status: '',
-    color: ''
-  }
+  searchForm.value = { vin: '', modelId: '', status: '' }
   pagination.value.currentPage = 1
   fetchData()
 }
-
-// 分页大小变化
 const handleSizeChange = (size) => {
   pagination.value.pageSize = size
   fetchData()
 }
-
-// 当前页变化
 const handleCurrentChange = (current) => {
   pagination.value.currentPage = current
   fetchData()
 }
+const goToAdd = () => router.push('/vehicles/add')
+const goToEdit = (vin) => router.push(`/vehicles/edit/${vin}`)
 
-// 跳转到添加页面
-const goToAdd = () => {
-  router.push('/vehicles/add')
-}
-
-// 跳转到编辑页面
-const goToEdit = (vin) => {
-  router.push(`/vehicles/edit/${vin}`)
-}
-
-// 更新车辆状态
+// 更新车辆状态（出售）
 const updateStatus = (vin, status) => {
-  const statusText = getStatusText(status)
-  ElMessageBox.confirm(`确定要将该车辆标记为${statusText}吗？`, '警告', {
-    confirmButtonText: '确定',
+  const statusText = status === 'sold' ? '售出' : getStatusText(status)
+
+  ElMessageBox.confirm(`确定要将该车辆标记为【${statusText}】吗？\n标记售出后将无法再进行编辑或删除。`, '确认出售', {
+    confirmButtonText: '确定出售',
     cancelButtonText: '取消',
     type: 'warning'
   }).then(async () => {
     try {
-      await put(`/vehicles/${vin}/status`, { status })
-      ElMessage.success(`车辆已标记为${statusText}`)
-      fetchData()
+      await put(`/api/vehicles/${vin}/status?status=${status}`)
+      ElMessage.success(`车辆已成功标记为${statusText}`)
+      fetchData() // 刷新列表，此时该行操作列将变为空
     } catch (error) {
       ElMessage.error('更新车辆状态失败')
-      console.error('更新车辆状态失败:', error)
+      console.error('Error:', error)
     }
-  }).catch(() => {
-    // 取消操作
-  })
+  }).catch(() => {})
 }
 
 // 删除车辆
@@ -260,16 +242,13 @@ const handleDelete = (vin) => {
     type: 'warning'
   }).then(async () => {
     try {
-      await del(`/vehicles/${vin}`)
+      await del(`/api/vehicles/${vin}`)
       ElMessage.success('删除成功')
       fetchData()
     } catch (error) {
       ElMessage.error('删除失败')
-      console.error('删除车辆失败:', error)
     }
-  }).catch(() => {
-    // 取消删除操作
-  })
+  }).catch(() => {})
 }
 </script>
 
@@ -280,39 +259,34 @@ const handleDelete = (vin) => {
   border-radius: 8px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
-
+/* 其他样式保持不变 */
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
-
 .page-header h1 {
   font-size: 20px;
   font-weight: bold;
   color: #303133;
   margin: 0;
 }
-
 .search-container {
   margin-bottom: 20px;
   padding: 15px;
   background-color: #f5f7fa;
   border-radius: 4px;
 }
-
 .search-form {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
 }
-
 .table-container {
   margin-bottom: 20px;
 }
-
 .pagination-container {
   display: flex;
   justify-content: flex-end;

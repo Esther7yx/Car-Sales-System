@@ -1,63 +1,50 @@
 package com.carsale.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat; // 1. 务必确认引入了这个包
 import java.time.LocalDateTime;
 
 /**
  * 厂商信息表实体类
- * 对应数据库中的manufacturer表
  */
 @TableName("manufacturer")
 public class Manufacturer {
-    /**
-     * 厂商ID，主键，自增
-     */
     @TableId(value = "manufacturer_id", type = IdType.AUTO)
     private Integer manufacturerId;
 
-    /**
-     * 厂商名称，唯一约束
-     */
     @TableField("manufacturer_name")
     private String manufacturerName;
 
-    /**
-     * 联系人
-     */
     @TableField("contact_person")
     private String contactPerson;
 
-    /**
-     * 联系电话
-     */
     @TableField("contact_phone")
     private String contactPhone;
 
-    /**
-     * 地址
-     */
     @TableField("address")
     private String address;
 
-    /**
-     * 合作状态：active(活跃)、inactive(不活跃)、suspended(暂停)
-     */
     @TableField("cooperation_status")
     private String cooperationStatus;
 
     /**
      * 创建时间
+     * 【重要修复】：添加 @JsonFormat 注解
      */
     @TableField(value = "created_at", fill = FieldFill.INSERT)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime createdAt;
 
     /**
      * 更新时间
+     * 【重要修复】：添加 @JsonFormat 注解
      */
     @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime updatedAt;
 
-    // getter and setter methods
+    // --- Getter and Setter ---
+
     public Integer getManufacturerId() {
         return manufacturerId;
     }

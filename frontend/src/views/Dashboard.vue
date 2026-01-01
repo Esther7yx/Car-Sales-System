@@ -29,7 +29,7 @@
                 </div>
                 <div class="stat-info">
                   <div class="stat-value">{{ inStockVehicles }}</div>
-                  <div class="stat-label">库存车辆</div>
+                  <div class="stat-label">库存车辆 (在库+在途)</div>
                 </div>
               </div>
             </el-card>
@@ -42,7 +42,7 @@
                 </div>
                 <div class="stat-info">
                   <div class="stat-value">{{ totalSales }}</div>
-                  <div class="stat-label">本月销售</div>
+                  <div class="stat-label">总销售 (已售)</div>
                 </div>
               </div>
             </el-card>
@@ -54,8 +54,8 @@
                   <el-icon><CaretRight /></el-icon>
                 </div>
                 <div class="stat-info">
-                  <div class="stat-value">{{ totalProfit }}</div>
-                  <div class="stat-label">本月利润</div>
+                  <div class="stat-value">{{ formatMoney(totalProfit) }}</div>
+                  <div class="stat-label">总利润</div>
                 </div>
               </div>
             </el-card>
@@ -77,21 +77,22 @@ const inStockVehicles = ref(0)
 const totalSales = ref(0)
 const totalProfit = ref(0)
 
+// 格式化金额
+const formatMoney = (val) => {
+  if (val === undefined || val === null) return '¥0'
+  return '¥' + Number(val).toLocaleString()
+}
+
 // 获取统计数据
 const fetchStats = async () => {
   try {
-    // 这里应该调用实际的统计接口，暂时使用模拟数据
-    // const res = await get('/dashboard/stats')
-    // totalVehicles.value = res.data.totalVehicles
-    // inStockVehicles.value = res.data.inStockVehicles
-    // totalSales.value = res.data.totalSales
-    // totalProfit.value = res.data.totalProfit
-    
-    // 模拟数据
-    totalVehicles.value = 125
-    inStockVehicles.value = 87
-    totalSales.value = 38
-    totalProfit.value = '¥125,800'
+    const res = await get('/api/vehicles/stats')
+    if (res.data) {
+      totalVehicles.value = res.data.totalVehicles || 0
+      inStockVehicles.value = res.data.inStockVehicles || 0
+      totalSales.value = res.data.totalSales || 0
+      totalProfit.value = res.data.totalProfit || 0
+    }
   } catch (error) {
     console.error('获取统计数据失败:', error)
     ElMessage.error('获取统计数据失败')

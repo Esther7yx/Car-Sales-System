@@ -6,6 +6,7 @@ import com.carsale.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -14,17 +15,17 @@ import java.time.LocalDateTime;
 
 /**
  * 认证控制器
- * 处理用户登录相关请求
+ * 修复后：类路径添加 /api，与前端请求的 /api/login 保持一致
  */
 @RestController
+@RequestMapping("/api") // <--- 关键修改：必须加上这个，否则报 404
 public class AuthController {
     @Autowired
     private SystemUserService systemUserService;
 
     /**
      * 用户登录
-     * @param loginRequest 登录请求参数，包含username和password
-     * @return 登录结果
+     * 最终接口地址：POST /api/login
      */
     @PostMapping("/login")
     public Result<Map<String, Object>> login(@RequestBody Map<String, String> loginRequest) {
@@ -40,7 +41,7 @@ public class AuthController {
         SystemUser user = systemUserService.login(username, password);
 
         if (user != null) {
-            // 登录成功，生成token（这里使用简单的临时token，实际项目中应该使用JWT）
+            // 登录成功，生成临时token
             String token = "temp_token_" + System.currentTimeMillis();
 
             // 更新最后登录时间
@@ -51,7 +52,7 @@ public class AuthController {
             Map<String, Object> data = new HashMap<>();
             data.put("token", token);
 
-            // 构造用户信息，不包含敏感字段
+            // 构造用户信息
             Map<String, Object> userInfo = new HashMap<>();
             userInfo.put("userId", user.getUserId());
             userInfo.put("username", user.getUsername());
@@ -63,7 +64,6 @@ public class AuthController {
 
             return Result.success(data);
         } else {
-            // 登录失败
             return Result.error(401, "用户名或密码错误");
         }
     }

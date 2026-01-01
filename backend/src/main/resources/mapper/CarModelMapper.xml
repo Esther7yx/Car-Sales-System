@@ -2,42 +2,42 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.carsale.mapper.CarModelMapper">
 
-    <!-- 基础结果集映射 -->
     <resultMap id="BaseResultMap" type="com.carsale.entity.CarModel">
         <id column="model_id" property="modelId" jdbcType="INTEGER"/>
         <result column="manufacturer_id" property="manufacturerId" jdbcType="INTEGER"/>
         <result column="model_name" property="modelName" jdbcType="VARCHAR"/>
-        <result column="model_code" property="modelCode" jdbcType="VARCHAR"/>
         <result column="year" property="year" jdbcType="INTEGER"/>
-        <result column="description" property="description" jdbcType="VARCHAR"/>
-        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="engine_type" property="engineType" jdbcType="VARCHAR"/>
+        <result column="transmission" property="transmission" jdbcType="VARCHAR"/>
+        <result column="fuel_type" property="fuelType" jdbcType="VARCHAR"/>
+        <result column="guide_price" property="guidePrice" jdbcType="DECIMAL"/>
+        <result column="features" property="features" jdbcType="VARCHAR"/>
         <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
         <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <!-- 包含厂商信息的结果集映射 -->
     <resultMap id="CarModelWithManufacturerResultMap" type="com.carsale.entity.CarModel" extends="BaseResultMap">
-        <!-- 厂商信息 -->
-        <result column="manufacturer_name" property="manufacturerName" jdbcType="VARCHAR"/>
-        <result column="manufacturer_code" property="manufacturerCode" jdbcType="VARCHAR"/>
-        <result column="cooperation_status" property="cooperationStatus" jdbcType="VARCHAR"/>
+        <association property="manufacturer" javaType="com.carsale.entity.Manufacturer">
+            <id column="m_id" property="manufacturerId"/>
+            <result column="manufacturer_name" property="manufacturerName"/>
+            <result column="contact_person" property="contactPerson"/>
+            <result column="contact_phone" property="contactPhone"/>
+        </association>
     </resultMap>
 
-    <!-- 根据厂商ID查询车型列表 -->
     <select id="selectByManufacturerId" resultMap="BaseResultMap">
         SELECT * FROM car_model
         WHERE manufacturer_id = #{manufacturerId}
-        AND status = 'active'
         ORDER BY model_name ASC
     </select>
 
-    <!-- 分页查询车型信息，包含厂商关联 -->
     <select id="selectPageWithManufacturer" resultMap="CarModelWithManufacturerResultMap">
-        SELECT 
-            cm.*, 
-            m.manufacturer_name, 
-            m.manufacturer_code, 
-            m.cooperation_status
+        SELECT
+        cm.*,
+        m.manufacturer_id as m_id,
+        m.manufacturer_name,
+        m.contact_person,
+        m.contact_phone
         FROM car_model cm
         LEFT JOIN manufacturer m ON cm.manufacturer_id = m.manufacturer_id
         WHERE 1=1

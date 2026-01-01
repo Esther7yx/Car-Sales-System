@@ -1,14 +1,15 @@
 package com.carsale.controller;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.metadata.IPage; // 【新增】导入IPage
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.carsale.entity.CarModel;
 import com.carsale.service.CarModelService;
 import com.carsale.utils.Result;
-import com.carsale.utils.Result.PageInfo;
+// import com.carsale.utils.Result.PageInfo; // 【删除】不再需要手动构建PageInfo
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime; // 【新增】导入时间类
 import java.util.List;
 
 /**
@@ -31,22 +32,15 @@ public class CarModelController {
      * @return 分页查询结果
      */
     @GetMapping("/page")
-    public Result<List<CarModel>> pageQuery(@RequestParam(defaultValue = "1") long current,
-                                            @RequestParam(defaultValue = "10") long size,
-                                            @RequestParam(required = false) String modelName,
-                                            @RequestParam(required = false) Integer year) {
+    public Result<IPage<CarModel>> pageQuery(@RequestParam(defaultValue = "1") long current,
+                                             @RequestParam(defaultValue = "10") long size,
+                                             @RequestParam(required = false) String modelName,
+                                             @RequestParam(required = false) Integer year) {
         Page<CarModel> page = new Page<>(current, size);
         IPage<CarModel> pageResult = carModelService.selectPageWithManufacturer(page, modelName, year);
-        
-        PageInfo pageInfo = new PageInfo();
-        pageInfo.setCurrent(pageResult.getCurrent());
-        pageInfo.setSize(pageResult.getSize());
-        pageInfo.setTotal(pageResult.getTotal());
-        pageInfo.setPages(pageResult.getPages());
-        pageInfo.setHasPrevious(pageResult.getCurrent() > 1);
-        pageInfo.setHasNext(pageResult.getCurrent() < pageResult.getPages());
-        
-        return Result.success(pageResult.getRecords(), pageInfo);
+
+        // 【修改】直接返回 pageResult，包含 records 和 total
+        return Result.success(pageResult);
     }
 
     /**
@@ -85,12 +79,16 @@ public class CarModelController {
         if (carModel.getManufacturerId() == null) {
             return Result.error("厂商ID不能为空");
         }
-        
+
         // 验证车型名称是否已存在
         if (carModelService.checkModelNameExists(carModel.getManufacturerId(), carModel.getModelName(), null)) {
             return Result.error("该厂商下已存在相同名称的车型");
         }
-        
+
+        // 【新增】手动设置创建时间和更新时间
+        carModel.setCreatedAt(LocalDateTime.now());
+        carModel.setUpdatedAt(LocalDateTime.now());
+
         boolean saved = carModelService.save(carModel);
         if (saved) {
             return Result.success("新增车型成功");
@@ -111,15 +109,18 @@ public class CarModelController {
         if (carModelService.getById(id) == null) {
             return Result.error("车型不存在");
         }
-        
+
         // 设置车型ID
         carModel.setModelId(id);
-        
+
         // 验证车型名称是否已存在
         if (carModelService.checkModelNameExists(carModel.getManufacturerId(), carModel.getModelName(), id)) {
             return Result.error("该厂商下已存在相同名称的车型");
         }
-        
+
+        // 【新增】手动设置更新时间
+        carModel.setUpdatedAt(LocalDateTime.now());
+
         boolean updated = carModelService.updateById(carModel);
         if (updated) {
             return Result.success("更新车型成功");
@@ -139,7 +140,7 @@ public class CarModelController {
         if (carModelService.getById(id) == null) {
             return Result.error("车型不存在");
         }
-        
+
         boolean deleted = carModelService.removeById(id);
         if (deleted) {
             return Result.success("删除车型成功");
@@ -158,7 +159,7 @@ public class CarModelController {
         if (ids == null || ids.isEmpty()) {
             return Result.error("请选择要删除的车型");
         }
-        
+
         boolean deleted = carModelService.removeByIds(ids);
         if (deleted) {
             return Result.success("批量删除车型成功");

@@ -1,86 +1,64 @@
 <template>
   <div class="manufacturer-form-container">
-    <!-- 页面标题 -->
     <div class="page-header">
       <h1>{{ isEdit ? '编辑厂商' : '添加厂商' }}</h1>
     </div>
 
-    <!-- 表单内容 -->
     <div class="form-container">
       <el-form
-        :model="formData"
-        :rules="formRules"
-        ref="formRef"
-        label-width="120px"
-        class="manufacturer-form"
+          :model="formData"
+          :rules="formRules"
+          ref="formRef"
+          label-width="120px"
+          class="manufacturer-form"
       >
         <el-form-item label="厂商名称" prop="manufacturerName">
           <el-input
-            v-model="formData.manufacturerName"
-            placeholder="请输入厂商名称"
-            maxlength="50"
-            show-word-limit
+              v-model="formData.manufacturerName"
+              placeholder="请输入厂商名称"
+              maxlength="50"
+              show-word-limit
           />
         </el-form-item>
 
         <el-form-item label="联系人" prop="contactPerson">
           <el-input
-            v-model="formData.contactPerson"
-            placeholder="请输入联系人姓名"
-            maxlength="20"
-            show-word-limit
+              v-model="formData.contactPerson"
+              placeholder="请输入联系人姓名"
+              maxlength="20"
+              show-word-limit
           />
         </el-form-item>
 
         <el-form-item label="联系电话" prop="contactPhone">
           <el-input
-            v-model="formData.contactPhone"
-            placeholder="请输入联系电话"
-            maxlength="15"
-            show-word-limit
-          />
-        </el-form-item>
-
-        <el-form-item label="邮箱" prop="email">
-          <el-input
-            v-model="formData.email"
-            placeholder="请输入邮箱地址"
-            maxlength="50"
-            show-word-limit
+              v-model="formData.contactPhone"
+              placeholder="请输入联系电话"
+              maxlength="15"
+              show-word-limit
           />
         </el-form-item>
 
         <el-form-item label="地址" prop="address">
           <el-input
-            v-model="formData.address"
-            placeholder="请输入厂商地址"
-            type="textarea"
-            rows="3"
-            maxlength="200"
-            show-word-limit
+              v-model="formData.address"
+              placeholder="请输入厂商地址"
+              type="textarea"
+              rows="3"
+              maxlength="200"
+              show-word-limit
           />
         </el-form-item>
 
         <el-form-item label="合作状态" prop="cooperationStatus">
           <el-radio-group v-model="formData.cooperationStatus">
             <el-radio label="active">合作中</el-radio>
-            <el-radio label="terminated">已终止</el-radio>
+            <el-radio label="inactive">已终止</el-radio>
           </el-radio-group>
         </el-form-item>
 
-        <el-form-item label="备注" prop="remark">
-          <el-input
-            v-model="formData.remark"
-            placeholder="请输入备注信息"
-            type="textarea"
-            rows="4"
-            maxlength="500"
-            show-word-limit
-          />
-        </el-form-item>
-
         <el-form-item>
-          <el-button type="primary" @click="handleSubmit">保存</el-button>
+          <el-button type="primary" :loading="loading" @click="handleSubmit">保存</el-button>
           <el-button @click="handleCancel">取消</el-button>
         </el-form-item>
       </el-form>
@@ -89,33 +67,28 @@
 </template>
 
 <script setup>
+// ... script 部分保持不变 ...
 import { ref, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { get, post, put } from '../../utils/request'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 const route = useRoute()
 const router = useRouter()
 
-// 表单引用
 const formRef = ref(null)
-
-// 判断是否为编辑模式
 const isEdit = ref(!!route.params.id)
+const loading = ref(false)
 
-// 表单数据
 const formData = reactive({
-  manufacturerId: null,
+  manufacturerId: undefined,
   manufacturerName: '',
   contactPerson: '',
   contactPhone: '',
-  email: '',
   address: '',
-  cooperationStatus: 'active',
-  remark: ''
+  cooperationStatus: 'active'
 })
 
-// 表单验证规则
 const formRules = reactive({
   manufacturerName: [
     { required: true, message: '请输入厂商名称', trigger: 'blur' },
@@ -129,10 +102,6 @@ const formRules = reactive({
     { required: true, message: '请输入联系电话', trigger: 'blur' },
     { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号码', trigger: 'blur' }
   ],
-  email: [
-    { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
-  ],
   address: [
     { required: true, message: '请输入厂商地址', trigger: 'blur' },
     { min: 5, max: 200, message: '长度在 5 到 200 个字符', trigger: 'blur' }
@@ -142,51 +111,51 @@ const formRules = reactive({
   ]
 })
 
-// 页面加载时获取数据（编辑模式）
 onMounted(() => {
   if (isEdit.value) {
     fetchManufacturerData()
   }
 })
 
-// 获取厂商数据（编辑模式）
 const fetchManufacturerData = async () => {
   try {
     const response = await get(`/api/manufacturer/${route.params.id}`)
-    Object.assign(formData, response.data)
+    const { manufacturerId, manufacturerName, contactPerson, contactPhone, address, cooperationStatus } = response.data
+    Object.assign(formData, { manufacturerId, manufacturerName, contactPerson, contactPhone, address, cooperationStatus })
   } catch (error) {
-    ElMessage.error('获取厂商信息失败')
     console.error('获取厂商信息失败:', error)
-    router.push('/manufacturers')
   }
 }
 
-// 提交表单
 const handleSubmit = async () => {
   if (!formRef.value) return
 
   await formRef.value.validate(async (valid) => {
     if (valid) {
       try {
+        loading.value = true
+        const submitData = { ...formData }
+        if (!isEdit.value) {
+          delete submitData.manufacturerId
+        }
+
         if (isEdit.value) {
-          // 编辑模式
-          await put(`/api/manufacturer/${formData.manufacturerId}`, formData)
+          await put(`/api/manufacturer/${formData.manufacturerId}`, submitData)
           ElMessage.success('编辑厂商成功')
         } else {
-          // 添加模式
-          await post('/api/manufacturer', formData)
+          await post('/api/manufacturer', submitData)
           ElMessage.success('添加厂商成功')
         }
         router.push('/manufacturers')
       } catch (error) {
-        ElMessage.error(isEdit.value ? '编辑厂商失败' : '添加厂商失败')
         console.error('保存厂商失败:', error)
+      } finally {
+        loading.value = false
       }
     }
   })
 }
 
-// 取消操作
 const handleCancel = () => {
   router.push('/manufacturers')
 }

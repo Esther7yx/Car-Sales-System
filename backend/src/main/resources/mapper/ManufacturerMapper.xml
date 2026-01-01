@@ -2,16 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.carsale.mapper.ManufacturerMapper">
 
-    <!-- 基础结果集映射 -->
     <resultMap id="BaseResultMap" type="com.carsale.entity.Manufacturer">
         <id column="manufacturer_id" property="manufacturerId" jdbcType="INTEGER"/>
         <result column="manufacturer_name" property="manufacturerName" jdbcType="VARCHAR"/>
-        <result column="manufacturer_code" property="manufacturerCode" jdbcType="VARCHAR"/>
         <result column="contact_person" property="contactPerson" jdbcType="VARCHAR"/>
         <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR"/>
         <result column="address" property="address" jdbcType="VARCHAR"/>
         <result column="cooperation_status" property="cooperationStatus" jdbcType="VARCHAR"/>
-        <result column="description" property="description" jdbcType="VARCHAR"/>
         <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
         <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
     </resultMap>

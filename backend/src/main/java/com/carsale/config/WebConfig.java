@@ -2,6 +2,7 @@ package com.carsale.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule; // 【新增】引入Java 8时间模块
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -30,20 +31,24 @@ public class WebConfig implements WebMvcConfigurer {
 
     /**
      * 配置Jackson消息转换器，确保JSON序列化使用UTF-8编码
-     * 解决JSON返回中的中文乱码问题
+     * 解决JSON返回中的中文乱码问题，并修复时间序列化错误
      */
     @Bean
     public MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setDefaultCharset(StandardCharsets.UTF_8);
-        
+
         // 配置ObjectMapper
         ObjectMapper objectMapper = new ObjectMapper();
+
+        // 【新增】注册JavaTimeModule，解决LocalDateTime序列化报错问题
+        objectMapper.registerModule(new JavaTimeModule());
+
         // 禁用日期转时间戳
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         // 禁用空对象异常
         objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        
+
         converter.setObjectMapper(objectMapper);
         return converter;
     }

@@ -1,39 +1,21 @@
 <template>
-  <div id="app">
-    <MainLayout v-if="isAuthenticated" />
-    <router-view v-else />
-  </div>
+  <router-view />
 </template>
 
-<script setup>
-import { computed } from 'vue'
-import { useUserStore } from './store'
-import MainLayout from './layouts/MainLayout.vue'
-
-const userStore = useUserStore()
-
-// 检查用户是否已认证
-const isAuthenticated = computed(() => {
-  return userStore.token && userStore.token !== ''
-})
-</script>
-
 <style>
+/* 全局样式重置 */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #f5f7fa;
-}
-
-#app {
+html, body, #app {
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f5f7fa;
 }
 </style>
