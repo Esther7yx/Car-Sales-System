@@ -41,6 +41,25 @@ const routes = [
         component: () => import('../views/manufacturer/ManufacturerForm.vue'),
         meta: { title: '编辑厂商', requiresAuth: true }
       },
+      // --- 【新增】客户管理模块 ---
+      {
+        path: 'customers',
+        name: 'CustomerList',
+        component: () => import('../views/customer/CustomerList.vue'),
+        meta: { title: '客户管理', requiresAuth: true }
+      },
+      {
+        path: 'customers/add',
+        name: 'CustomerAdd',
+        component: () => import('../views/customer/CustomerForm.vue'),
+        meta: { title: '添加客户', requiresAuth: true }
+      },
+      {
+        path: 'customers/edit/:id',
+        name: 'CustomerEdit',
+        component: () => import('../views/customer/CustomerForm.vue'),
+        meta: { title: '编辑客户', requiresAuth: true }
+      },
       // --- 车型管理模块 ---
       {
         path: 'car-models',
@@ -78,6 +97,19 @@ const routes = [
         name: 'VehicleEdit',
         component: () => import('../views/vehicle/VehicleForm.vue'),
         meta: { title: '编辑车辆', requiresAuth: true }
+      },
+      // --- 进货管理模块 ---
+      {
+        path: 'purchase',
+        name: 'PurchaseList',
+        component: () => import('../views/purchase/PurchaseOrderList.vue'),
+        meta: { title: '进货管理', requiresAuth: true }
+      },
+      {
+        path: 'purchase/add',
+        name: 'PurchaseAdd',
+        component: () => import('../views/purchase/PurchaseOrderForm.vue'),
+        meta: { title: '新建采购单', requiresAuth: true }
       }
     ]
   },

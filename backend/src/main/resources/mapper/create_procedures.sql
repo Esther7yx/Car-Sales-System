@@ -98,15 +98,15 @@ DELIMITER ;
 -- 业务场景：处理完整的销售业务
 -- 关键技术：库存检查（防超卖）、价格计算、状态更新
 -- 异常处理：完善的错误处理和回滚机制
+DROP PROCEDURE IF EXISTS process_sale_order;
 DELIMITER $$
-CREATE OR REPLACE PROCEDURE process_sale_order(
+CREATE PROCEDURE process_sale_order(
     IN p_customer_id INT,
     IN p_operator_id INT,
     IN p_payment_method ENUM('cash', 'loan', 'installment'),
-    IN p_sale_items JSON -- 格式: [{"vin": "xxx", "unit_price": 100000, "discount": 5000}]
-)
+    IN p_sale_items JSON
+        )
 BEGIN
-    -- 声明变量
     DECLARE v_sale_id INT;
     DECLARE v_order_number VARCHAR(50);
     DECLARE v_total_amount DECIMAL(12, 2) DEFAULT 0;
@@ -117,97 +117,58 @@ BEGIN
     DECLARE v_item_count INT;
     DECLARE v_current_item INT DEFAULT 0;
     DECLARE v_vehicle_status ENUM('in_stock', 'sold', 'reserved', 'in_transit');
+    DECLARE v_error_msg VARCHAR(255);
+
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        -- 发生异常时回滚事务
-        ROLLBACK;
-        -- 抛出错误信息
-        SIGNAL SQLSTATE '45000' 
-        SET MESSAGE_TEXT = '销售订单处理失败，请检查参数和数据完整性';
-    END;
+BEGIN
+ROLLBACK;
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Sale order process failed';
+END;
 
-    -- 开始事务
-    START TRANSACTION;
+START TRANSACTION;
 
-    -- 1. 生成销售订单号
-    SET v_order_number = CONCAT('SO_', DATE_FORMAT(CURRENT_DATE, '%Y%m%d'), '_', LPAD(FLOOR(RAND() * 10000), 4, '0'));
-
-    -- 2. 计算总金额
+SET v_order_number = CONCAT('SO_', DATE_FORMAT(NOW(), '%Y%m%d'), '_', LPAD(FLOOR(RAND() * 10000), 4, '0'));
     SET v_item_count = JSON_LENGTH(p_sale_items);
+
+    -- 计算总金额
     WHILE v_current_item < v_item_count DO
-        SET v_vin = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].vin')));
         SET v_unit_price = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].unit_price')));
         SET v_discount = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].discount')));
         SET v_subtotal = v_unit_price - IFNULL(v_discount, 0);
         SET v_total_amount = v_total_amount + v_subtotal;
         SET v_current_item = v_current_item + 1;
-    END WHILE;
+END WHILE;
 
-    -- 3. 创建销售订单
-    INSERT INTO sale_order (
-        order_number, 
-        customer_id, 
-        operator_id, 
-        total_amount, 
-        payment_method, 
-        status
-    ) VALUES (
-        v_order_number, 
-        p_customer_id, 
-        p_operator_id, 
-        v_total_amount, 
-        p_payment_method, 
-        'pending'
-    );
+INSERT INTO sale_order (order_number, customer_id, operator_id, total_amount, payment_method, status)
+VALUES (v_order_number, p_customer_id, p_operator_id, v_total_amount, p_payment_method, 'paid');
 
-    -- 获取销售订单ID
-    SET v_sale_id = LAST_INSERT_ID();
-
-    -- 4. 处理销售明细
+SET v_sale_id = LAST_INSERT_ID();
     SET v_current_item = 0;
+
     WHILE v_current_item < v_item_count DO
         SET v_vin = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].vin')));
         SET v_unit_price = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].unit_price')));
         SET v_discount = JSON_UNQUOTE(JSON_EXTRACT(p_sale_items, CONCAT('$[', v_current_item, '].discount')));
         SET v_subtotal = v_unit_price - IFNULL(v_discount, 0);
 
-        -- 检查车辆状态
-        SELECT status INTO v_vehicle_status
-        FROM vehicle WHERE vin = v_vin FOR UPDATE;
+SELECT status INTO v_vehicle_status FROM vehicle WHERE vin = v_vin FOR UPDATE;
 
-        IF v_vehicle_status != 'in_stock' THEN
-            SIGNAL SQLSTATE '45000' 
-            SET MESSAGE_TEXT = CONCAT('车辆', v_vin, '状态异常，无法销售');
-        END IF;
+IF v_vehicle_status != 'in_stock' THEN
+            SET v_error_msg = CONCAT('Error: Vehicle ', v_vin, ' is not in stock');
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = v_error_msg;
+END IF;
 
-        -- 插入销售明细
-        INSERT INTO sale_detail (
-            sale_id, 
-            vin, 
-            unit_price, 
-            discount, 
-            quantity, 
-            subtotal
-        ) VALUES (
-            v_sale_id, 
-            v_vin, 
-            v_unit_price, 
-            IFNULL(v_discount, 0), 
-            1, 
-            v_subtotal
-        );
+INSERT INTO sale_detail (sale_id, vin, unit_price, discount, quantity, subtotal)
+VALUES (v_sale_id, v_vin, v_unit_price, IFNULL(v_discount, 0), 1, v_subtotal);
 
-        -- 更新车辆状态（这个会由触发器自动处理）
-        -- UPDATE vehicle SET status = 'sold', sale_date = CURRENT_DATE WHERE vin = v_vin;
+-- 【核心】扣减库存
+UPDATE vehicle SET status = 'sold', sale_date = CURRENT_DATE WHERE vin = v_vin;
 
-        SET v_current_item = v_current_item + 1;
-    END WHILE;
+SET v_current_item = v_current_item + 1;
+END WHILE;
 
-    -- 提交事务
-    COMMIT;
-
-    -- 返回销售订单ID
-    SELECT v_sale_id AS sale_id, v_order_number AS order_number;
+COMMIT;
+SELECT v_sale_id AS sale_id, v_order_number AS order_number;
 END $$
 DELIMITER ;
 
@@ -338,5 +299,128 @@ BEGIN
         v_current_stock AS current_stock,
         v_avg_days_in_stock AS avg_days_in_stock,
         v_inventory_value AS inventory_value;
+END $$
+DELIMITER ;
+
+-- =============================================
+-- 4. [新增] 创建采购单 (Create Purchase Order)
+-- =============================================
+DROP PROCEDURE IF EXISTS proc_create_purchase_order;
+DELIMITER $$
+CREATE PROCEDURE proc_create_purchase_order(
+    IN p_manufacturer_id INT,
+    IN p_operator_id INT,
+    IN p_items JSON  -- 格式：[{"model_id": 1, "quantity": 5, "unit_price": 200000}, ...]
+)
+BEGIN
+    DECLARE v_order_id INT;
+    DECLARE v_order_number VARCHAR(50);
+    DECLARE v_total_amount DECIMAL(15, 2) DEFAULT 0;
+    DECLARE v_item_count INT;
+    DECLARE v_i INT DEFAULT 0;
+
+    DECLARE v_model_id INT;
+    DECLARE v_qty INT;
+    DECLARE v_price DECIMAL(10, 2);
+    DECLARE v_subtotal DECIMAL(12, 2);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK;
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Create purchase order failed';
+END;
+
+START TRANSACTION;
+
+SET v_order_number = CONCAT('PO_', DATE_FORMAT(NOW(), '%Y%m%d'), '_', LPAD(FLOOR(RAND() * 10000), 4, '0'));
+    SET v_item_count = JSON_LENGTH(p_items);
+
+    -- 计算总额
+    WHILE v_i < v_item_count DO
+        SET v_qty = JSON_UNQUOTE(JSON_EXTRACT(p_items, CONCAT('$[', v_i, '].quantity')));
+        SET v_price = JSON_UNQUOTE(JSON_EXTRACT(p_items, CONCAT('$[', v_i, '].unit_price')));
+        SET v_total_amount = v_total_amount + (v_qty * v_price);
+        SET v_i = v_i + 1;
+END WHILE;
+
+INSERT INTO purchase_order (order_number, manufacturer_id, operator_id, total_amount, status)
+VALUES (v_order_number, p_manufacturer_id, p_operator_id, v_total_amount, 'pending');
+
+SET v_order_id = LAST_INSERT_ID();
+    SET v_i = 0;
+
+    -- 插入明细
+    WHILE v_i < v_item_count DO
+        SET v_model_id = JSON_UNQUOTE(JSON_EXTRACT(p_items, CONCAT('$[', v_i, '].model_id')));
+        SET v_qty = JSON_UNQUOTE(JSON_EXTRACT(p_items, CONCAT('$[', v_i, '].quantity')));
+        SET v_price = JSON_UNQUOTE(JSON_EXTRACT(p_items, CONCAT('$[', v_i, '].unit_price')));
+        SET v_subtotal = v_qty * v_price;
+
+INSERT INTO purchase_order_detail (order_id, model_id, quantity, unit_price, subtotal)
+VALUES (v_order_id, v_model_id, v_qty, v_price, v_subtotal);
+
+SET v_i = v_i + 1;
+END WHILE;
+
+COMMIT;
+SELECT v_order_id as order_id, v_order_number as order_number;
+END $$
+DELIMITER ;
+
+
+-- =============================================
+-- 5. [新增] 批量采购入库 (Receive Batch)
+-- =============================================
+DROP PROCEDURE IF EXISTS proc_receive_purchase_batch;
+DELIMITER $$
+CREATE PROCEDURE proc_receive_purchase_batch(
+    IN p_order_id INT,
+    IN p_operator_id INT,
+    IN p_vehicle_list JSON
+        -- 格式：[{"vin": "VIN001", "model_id": 1, "price": 200000, "location": "A区"}, ...]
+)
+BEGIN
+    DECLARE v_i INT DEFAULT 0;
+    DECLARE v_count INT;
+    DECLARE v_vin VARCHAR(17);
+    DECLARE v_model_id INT;
+    DECLARE v_price DECIMAL(10, 2);
+    DECLARE v_location VARCHAR(100);
+    DECLARE v_exists INT;
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+BEGIN
+ROLLBACK;
+SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Batch receive failed';
+END;
+
+START TRANSACTION;
+
+SELECT COUNT(*) INTO v_exists FROM purchase_order WHERE order_id = p_order_id AND status = 'pending';
+IF v_exists = 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: Order not found or already received';
+END IF;
+
+    SET v_count = JSON_LENGTH(p_vehicle_list);
+
+    WHILE v_i < v_count DO
+        SET v_vin = JSON_UNQUOTE(JSON_EXTRACT(p_vehicle_list, CONCAT('$[', v_i, '].vin')));
+        SET v_model_id = JSON_UNQUOTE(JSON_EXTRACT(p_vehicle_list, CONCAT('$[', v_i, '].model_id')));
+        SET v_price = JSON_UNQUOTE(JSON_EXTRACT(p_vehicle_list, CONCAT('$[', v_i, '].price')));
+        SET v_location = JSON_UNQUOTE(JSON_EXTRACT(p_vehicle_list, CONCAT('$[', v_i, '].location')));
+
+INSERT INTO vehicle (vin, model_id, purchase_price, sale_price, status, warehouse_location, purchase_date)
+VALUES (v_vin, v_model_id, v_price, v_price * 1.2, 'in_stock', v_location, CURRENT_DATE);
+
+INSERT INTO inventory_log (vin, action_type, new_status, new_location, operator_id, remark)
+VALUES (v_vin, 'in', 'in_stock', v_location, p_operator_id, CONCAT('Purchase Order: ', p_order_id));
+
+SET v_i = v_i + 1;
+END WHILE;
+
+UPDATE purchase_order SET status = 'received', receive_time = NOW() WHERE order_id = p_order_id;
+
+COMMIT;
+SELECT 'Success' as result;
 END $$
 DELIMITER ;

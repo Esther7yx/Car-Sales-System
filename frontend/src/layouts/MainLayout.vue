@@ -21,6 +21,15 @@
           <template #title>系统概览</template>
         </el-menu-item>
 
+        <el-sub-menu index="purchase">
+          <template #title>
+            <el-icon><ShoppingCart /></el-icon>
+            <span>进货管理</span>
+          </template>
+          <el-menu-item index="/purchase">采购单列表</el-menu-item>
+          <el-menu-item index="/purchase/add">新建采购单</el-menu-item>
+        </el-sub-menu>
+
         <el-sub-menu index="manufacturer">
           <template #title>
             <el-icon><OfficeBuilding /></el-icon>
@@ -28,6 +37,15 @@
           </template>
           <el-menu-item index="/manufacturers">厂商列表</el-menu-item>
           <el-menu-item index="/manufacturers/add">添加厂商</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="customer">
+          <template #title>
+            <el-icon><User /></el-icon>
+            <span>客户管理</span>
+          </template>
+          <el-menu-item index="/customers">客户列表</el-menu-item>
+          <el-menu-item index="/customers/add">添加客户</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="car-model">
@@ -105,7 +123,9 @@ import {
   Van,
   SetUp,
   ArrowDown,
-  UserFilled
+  UserFilled,
+  User ,
+  ShoppingCart
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -127,9 +147,14 @@ const pageTitle = computed(() => {
   const routeName = route.name
   const titleMap = {
     'Dashboard': '系统概览',
+    'PurchaseList': '进货管理',
+    'PurchaseAdd': '新建采购单',
     'ManufacturerList': '厂商管理',
     'ManufacturerAdd': '添加厂商',
     'ManufacturerEdit': '编辑厂商',
+    'CustomerList': '客户管理',
+    'CustomerAdd': '添加客户',
+    'CustomerEdit': '编辑客户',
     'CarModelList': '车型管理',
     'CarModelAdd': '添加车型',
     'CarModelEdit': '编辑车型',
@@ -142,7 +167,7 @@ const pageTitle = computed(() => {
 
 // 用户信息
 const userName = computed(() => userStore.userInfo?.realName || userStore.userInfo?.username || '管理员')
-const userAvatar = computed(() => '') // 如果有头像 URL 可在此处设置
+const userAvatar = computed(() => '')
 
 // 切换侧边栏
 const toggleSidebar = () => {
@@ -172,7 +197,7 @@ const handleLogout = () => {
   transition: width 0.3s;
   display: flex;
   flex-direction: column;
-  flex-shrink: 0; /* 防止被压缩 */
+  flex-shrink: 0;
 }
 
 .sidebar-collapsed {
@@ -206,7 +231,7 @@ const handleLogout = () => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* 防止主内容区出现双滚动条 */
+  overflow: hidden;
   background-color: #f0f2f5;
 }
 
@@ -266,7 +291,7 @@ const handleLogout = () => {
 .content {
   flex: 1;
   padding: 20px;
-  overflow-y: auto; /* 内容过多时只在内部滚动 */
+  overflow-y: auto;
 }
 
 /* 路由切换动画 */

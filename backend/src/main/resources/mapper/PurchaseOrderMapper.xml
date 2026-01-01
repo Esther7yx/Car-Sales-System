@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.carsale.mapper.PurchaseOrderMapper">
+
+    <select id="selectOrderPage" resultType="com.carsale.entity.PurchaseOrder">
+        SELECT
+        po.*,
+        m.manufacturer_name AS manufacturerName,
+        u.real_name AS operatorName
+        FROM purchase_order po
+        LEFT JOIN manufacturer m ON po.manufacturer_id = m.manufacturer_id
+        LEFT JOIN system_user u ON po.operator_id = u.user_id
+        <where>
+            <if test="status != null and status != ''">
+                AND po.status = #{status}
+            </if>
+        </where>
+        ORDER BY po.create_time DESC
+    </select>
+
+    <select id="selectOrderDetails" resultType="java.util.Map">
+        SELECT
+            d.detail_id,
+            d.model_id,
+            cm.model_name,
+            d.quantity,
+            d.unit_price,
+            d.subtotal
+        FROM purchase_order_detail d
+                 LEFT JOIN car_model cm ON d.model_id = cm.model_id
+        WHERE d.order_id = #{orderId}
+    </select>
+
+    <select id="createPurchaseOrder" statementType="CALLABLE" resultType="java.util.Map">
+        {call proc_create_purchase_order(
+                #{manufacturerId, mode=IN, jdbcType=INTEGER},
+                #{operatorId, mode=IN, jdbcType=INTEGER},
+                #{itemsJson, mode=IN, jdbcType=OTHER}
+              )}
+    </select>
+
+    <select id="receivePurchaseBatch" statementType="CALLABLE">
+        {call proc_receive_purchase_batch(
+                #{orderId, mode=IN, jdbcType=INTEGER},
+                #{operatorId, mode=IN, jdbcType=INTEGER},
+                #{vehicleListJson, mode=IN, jdbcType=OTHER}
+              )}
+    </select>
+
+</mapper>

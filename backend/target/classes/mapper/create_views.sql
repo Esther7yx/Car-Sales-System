@@ -135,3 +135,39 @@ LEFT JOIN sale_order so ON sd.sale_id = so.sale_id
 GROUP BY m.manufacturer_name, c.model_name, c.year
 ORDER BY turnover_rate ASC
 WITH CHECK OPTION;
+
+
+-- 视图6：各品牌库存统计 (用于饼图)
+CREATE OR REPLACE VIEW view_stock_stats AS
+SELECT
+    m.manufacturer_name,
+    COUNT(v.vin) as stock_count,
+    COALESCE(SUM(v.purchase_price), 0) as total_value
+FROM manufacturer m
+         LEFT JOIN car_model cm ON m.manufacturer_id = cm.manufacturer_id
+         LEFT JOIN vehicle v ON cm.model_id = v.model_id AND v.status = 'in_stock'
+GROUP BY m.manufacturer_id, m.manufacturer_name
+HAVING stock_count > 0;
+
+-- 视图7：最近 12 个月的销售趋势 (用于折线图)
+CREATE OR REPLACE VIEW view_sales_trend AS
+SELECT
+    DATE_FORMAT(so.create_time, '%Y-%m') as sale_month,
+    COUNT(so.sale_id) as order_count,
+    SUM(so.total_amount) as total_revenue,
+    -- 利润 = 销售总额 - 车辆进价总额
+    (SUM(so.total_amount) - SUM(v.purchase_price)) as total_profit
+FROM sale_order so
+         JOIN sale_detail sd ON so.sale_id = sd.sale_id
+         JOIN vehicle v ON sd.vin = v.vin
+WHERE so.create_time >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+GROUP BY sale_month
+ORDER BY sale_month ASC;
+
+-- 视图8：核心指标概览 (用于首页顶部的数字卡片)
+CREATE OR REPLACE VIEW view_dashboard_summary AS
+SELECT
+    (SELECT COUNT(*) FROM vehicle WHERE status = 'in_stock') as total_stock_count,
+    (SELECT COUNT(*) FROM vehicle WHERE status = 'sold') as total_sold_count,
+    (SELECT COALESCE(SUM(total_amount), 0) FROM sale_order) as total_revenue,
+    (SELECT COUNT(*) FROM customer) as total_customers;

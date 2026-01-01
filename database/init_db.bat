@@ -6,7 +6,7 @@ set MYSQL_PATH="C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe"
 set DB_NAME=car_sale_system
 set DB_USER=root
 REM 请确认下行是你设置的真实密码
-set DB_PASSWORD=123456
+set DB_PASSWORD=Zyx.0507.xyz
 set DB_PORT=3306
 
 echo Creating database...
