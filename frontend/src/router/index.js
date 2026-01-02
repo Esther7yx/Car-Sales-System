@@ -78,6 +78,82 @@ const routes = [
         name: 'VehicleEdit',
         component: () => import('../views/vehicle/VehicleForm.vue'),
         meta: { title: '编辑车辆', requiresAuth: true }
+      },
+      // --- 客户管理模块 ---
+      {
+        path: 'customers',
+        name: 'CustomerList',
+        component: () => import('../views/customer/CustomerList.vue'),
+        meta: { title: '客户管理', requiresAuth: true }
+      },
+      {
+        path: 'customers/add',
+        name: 'CustomerAdd',
+        component: () => import('../views/customer/CustomerForm.vue'),
+        meta: { title: '添加客户', requiresAuth: true }
+      },
+      {
+        path: 'customers/edit/:id',
+        name: 'CustomerEdit',
+        component: () => import('../views/customer/CustomerForm.vue'),
+        meta: { title: '编辑客户', requiresAuth: true }
+      },
+      // --- 销售管理模块 ---
+      {
+        path: 'sale-orders',
+        name: 'SaleOrderList',
+        component: () => import('../views/saleOrder/SaleOrderList.vue'),
+        meta: { title: '销售管理', requiresAuth: true }
+      },
+      {
+        path: 'sale-orders/add',
+        name: 'SaleOrderAdd',
+        component: () => import('../views/saleOrder/SaleOrderForm.vue'),
+        meta: { title: '添加销售订单', requiresAuth: true }
+      },
+      {
+        path: 'sale-orders/detail/:id',
+        name: 'SaleOrderDetail',
+        component: () => import('../views/saleOrder/SaleOrderDetail.vue'),
+        meta: { title: '销售订单详情', requiresAuth: true }
+      },
+      // --- 进货管理模块 ---
+      {
+        path: 'purchase-orders',
+        name: 'PurchaseOrderList',
+        component: () => import('../views/purchaseOrder/PurchaseOrderList.vue'),
+        meta: { title: '进货管理', requiresAuth: true }
+      },
+      {
+        path: 'purchase-orders/add',
+        name: 'PurchaseOrderAdd',
+        component: () => import('../views/purchaseOrder/PurchaseOrderForm.vue'),
+        meta: { title: '添加进货订单', requiresAuth: true }
+      },
+      {
+        path: 'purchase-orders/detail/:id',
+        name: 'PurchaseOrderDetail',
+        component: () => import('../views/purchaseOrder/PurchaseOrderDetail.vue'),
+        meta: { title: '进货订单详情', requiresAuth: true }
+      },
+      // --- 仓库管理模块 ---
+      {
+        path: 'warehouses',
+        name: 'WarehouseList',
+        component: () => import('../views/warehouse/WarehouseList.vue'),
+        meta: { title: '仓库管理', requiresAuth: true }
+      },
+      {
+        path: 'warehouses/add',
+        name: 'WarehouseAdd',
+        component: () => import('../views/warehouse/WarehouseForm.vue'),
+        meta: { title: '添加仓库', requiresAuth: true }
+      },
+      {
+        path: 'warehouses/edit/:id',
+        name: 'WarehouseEdit',
+        component: () => import('../views/warehouse/WarehouseForm.vue'),
+        meta: { title: '编辑仓库', requiresAuth: true }
       }
     ]
   },

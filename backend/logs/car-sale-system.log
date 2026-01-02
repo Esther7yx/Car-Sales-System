@@ -4842,3 +4842,67 @@ This generated password is for development use only. Your security configuration
 2026-01-01T20:19:36.863+08:00  INFO 28520 --- [http-nio-8080-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
 2026-01-01T20:19:37.434+08:00  INFO 28520 --- [http-nio-8080-exec-1] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@cba2cf8
 2026-01-01T20:19:37.438+08:00  INFO 28520 --- [http-nio-8080-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-02T11:14:50.808+08:00  INFO 287444 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 17.0.17 with PID 287444 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2026-01-02T11:14:50.815+08:00 DEBUG 287444 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2026-01-02T11:14:50.816+08:00  INFO 287444 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2026-01-02T11:14:53.602+08:00  INFO 287444 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2026-01-02T11:14:53.641+08:00  INFO 287444 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-02T11:14:53.643+08:00  INFO 287444 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2026-01-02T11:14:53.854+08:00  INFO 287444 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-01-02T11:14:53.855+08:00  INFO 287444 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2949 ms
+2026-01-02T11:14:55.101+08:00  WARN 287444 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 6a28f56e-dd3b-4238-97fa-7a9bc86c5a8c
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-01-02T11:14:55.359+08:00  INFO 287444 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5ac53c06, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@54af3cb9, org.springframework.security.web.context.SecurityContextHolderFilter@4e140497, org.springframework.security.web.header.HeaderWriterFilter@d3e3085, org.springframework.web.filter.CorsFilter@236fdf, org.springframework.security.web.authentication.logout.LogoutFilter@739e8b96, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@2b6c7012, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@624b523, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@16e99306, org.springframework.security.web.session.SessionManagementFilter@14d25b6e, org.springframework.security.web.access.ExceptionTranslationFilter@2180e789, org.springframework.security.web.access.intercept.AuthorizationFilter@6f1c3f18]
+2026-01-02T11:14:56.007+08:00  INFO 287444 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2026-01-02T11:14:56.027+08:00  INFO 287444 --- [main] com.carsale.CarSaleApplication           : Started CarSaleApplication in 6.205 seconds (process running for 6.982)
+2026-01-02T11:17:46.576+08:00  INFO 263424 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 17.0.17 with PID 263424 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2026-01-02T11:17:46.583+08:00 DEBUG 263424 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2026-01-02T11:17:46.585+08:00  INFO 263424 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2026-01-02T11:17:48.427+08:00  INFO 263424 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2026-01-02T11:17:48.447+08:00  INFO 263424 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-02T11:17:48.447+08:00  INFO 263424 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2026-01-02T11:17:48.722+08:00  INFO 263424 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-01-02T11:17:48.724+08:00  INFO 263424 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2049 ms
+2026-01-02T11:17:50.673+08:00  WARN 263424 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: 39e06d71-800b-40c6-aa3e-040a91b2c607
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-01-02T11:17:50.833+08:00  INFO 263424 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@1cb9ef52, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5a622fe8, org.springframework.security.web.context.SecurityContextHolderFilter@477021ee, org.springframework.security.web.header.HeaderWriterFilter@1cbc5693, org.springframework.web.filter.CorsFilter@58f31629, org.springframework.security.web.authentication.logout.LogoutFilter@681c0ae6, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@5e9bbd9d, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@285005b8, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@124d26ba, org.springframework.security.web.session.SessionManagementFilter@6010d0d1, org.springframework.security.web.access.ExceptionTranslationFilter@108e9837, org.springframework.security.web.access.intercept.AuthorizationFilter@30aec673]
+2026-01-02T11:17:51.264+08:00  INFO 263424 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2026-01-02T11:17:51.280+08:00  INFO 263424 --- [main] com.carsale.CarSaleApplication           : Started CarSaleApplication in 5.661 seconds (process running for 6.208)
+2026-01-02T11:36:36.296+08:00  INFO 263424 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-02T11:36:36.298+08:00  INFO 263424 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-01-02T11:36:36.299+08:00  INFO 263424 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-01-02T11:36:36.442+08:00  INFO 263424 --- [http-nio-8080-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-02T11:36:37.153+08:00  INFO 263424 --- [http-nio-8080-exec-1] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4ec1fce7
+2026-01-02T11:36:37.158+08:00  INFO 263424 --- [http-nio-8080-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-02T11:43:20.156+08:00  INFO 329420 --- [main] com.carsale.CarSaleApplication           : Starting CarSaleApplication using Java 17.0.17 with PID 329420 (C:\Users\HP\Desktop\sale\backend\target\classes started by HP in C:\Users\HP\Desktop\sale\backend)
+2026-01-02T11:43:20.158+08:00 DEBUG 329420 --- [main] com.carsale.CarSaleApplication           : Running with Spring Boot v3.1.0, Spring v6.0.9
+2026-01-02T11:43:20.158+08:00  INFO 329420 --- [main] com.carsale.CarSaleApplication           : No active profile set, falling back to 1 default profile: "default"
+2026-01-02T11:43:20.948+08:00  INFO 329420 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port(s): 8080 (http)
+2026-01-02T11:43:20.958+08:00  INFO 329420 --- [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-01-02T11:43:20.958+08:00  INFO 329420 --- [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.8]
+2026-01-02T11:43:21.042+08:00  INFO 329420 --- [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-01-02T11:43:21.044+08:00  INFO 329420 --- [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 838 ms
+2026-01-02T11:43:21.554+08:00  WARN 329420 --- [main] .s.s.UserDetailsServiceAutoConfiguration : 
+
+Using generated security password: a1024e23-40b5-4ea6-89ee-a4da3ac53fab
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2026-01-02T11:43:21.624+08:00  INFO 329420 --- [main] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@73ca34e7, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@4d98e41b, org.springframework.security.web.context.SecurityContextHolderFilter@2e7af36e, org.springframework.security.web.header.HeaderWriterFilter@76f2dad9, org.springframework.web.filter.CorsFilter@5ed5b321, org.springframework.security.web.authentication.logout.LogoutFilter@2de6f1bc, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@740fefc6, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@741ac284, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@5696c927, org.springframework.security.web.session.SessionManagementFilter@6dca31eb, org.springframework.security.web.access.ExceptionTranslationFilter@42e4e589, org.springframework.security.web.access.intercept.AuthorizationFilter@52bd9a27]
+2026-01-02T11:43:21.924+08:00  INFO 329420 --- [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+2026-01-02T11:43:21.931+08:00  INFO 329420 --- [main] com.carsale.CarSaleApplication           : Started CarSaleApplication in 2.158 seconds (process running for 2.607)
+2026-01-02T11:44:32.997+08:00  INFO 329420 --- [http-nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-01-02T11:44:32.998+08:00  INFO 329420 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-01-02T11:44:32.998+08:00  INFO 329420 --- [http-nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-01-02T11:44:33.238+08:00  INFO 329420 --- [http-nio-8080-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-01-02T11:44:33.791+08:00  INFO 329420 --- [http-nio-8080-exec-1] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6796efc8
+2026-01-02T11:44:33.797+08:00  INFO 329420 --- [http-nio-8080-exec-1] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-01-02T11:44:42.302+08:00  WARN 329420 --- [http-nio-8080-exec-4] c.b.m.c.t.support.ReflectLambdaMeta      : Unable to make field private final java.lang.Class java.lang.invoke.SerializedLambda.capturingClass accessible: module java.base does not "opens java.lang.invoke" to unnamed module @2473b9ce

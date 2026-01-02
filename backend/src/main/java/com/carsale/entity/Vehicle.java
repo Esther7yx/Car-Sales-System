@@ -60,6 +60,12 @@ public class Vehicle {
     private LocalDate saleDate;
 
     /**
+     * 采购订单ID，外键关联purchase_order表
+     */
+    @TableField("purchase_order_id")
+    private Integer purchaseOrderId;
+
+    /**
      * 创建时间
      */
     @TableField(value = "created_at", fill = FieldFill.INSERT)
@@ -138,6 +144,14 @@ public class Vehicle {
 
     public void setPurchaseDate(LocalDate purchaseDate) {
         this.purchaseDate = purchaseDate;
+    }
+
+    public Integer getPurchaseOrderId() {
+        return purchaseOrderId;
+    }
+
+    public void setPurchaseOrderId(Integer purchaseOrderId) {
+        this.purchaseOrderId = purchaseOrderId;
     }
 
     public LocalDate getSaleDate() {

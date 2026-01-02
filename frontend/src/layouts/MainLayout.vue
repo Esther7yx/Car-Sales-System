@@ -47,6 +47,42 @@
           <el-menu-item index="/vehicles">车辆列表</el-menu-item>
           <el-menu-item index="/vehicles/add">添加车辆</el-menu-item>
         </el-sub-menu>
+
+        <el-sub-menu index="customer">
+          <template #title>
+            <el-icon><User /></el-icon>
+            <span>客户管理</span>
+          </template>
+          <el-menu-item index="/customers">客户列表</el-menu-item>
+          <el-menu-item index="/customers/add">添加客户</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="sale">
+          <template #title>
+            <el-icon><Sell /></el-icon>
+            <span>销售管理</span>
+          </template>
+          <el-menu-item index="/sale-orders">销售订单</el-menu-item>
+          <el-menu-item index="/sale-orders/add">添加销售</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="purchase">
+          <template #title>
+            <el-icon><ShoppingCart /></el-icon>
+            <span>进货管理</span>
+          </template>
+          <el-menu-item index="/purchase-orders">进货订单</el-menu-item>
+          <el-menu-item index="/purchase-orders/add">添加进货</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="warehouse">
+          <template #title>
+            <el-icon><House /></el-icon>
+            <span>仓库管理</span>
+          </template>
+          <el-menu-item index="/warehouses">仓库列表</el-menu-item>
+          <el-menu-item index="/warehouses/add">添加仓库</el-menu-item>
+        </el-sub-menu>
       </el-menu>
     </div>
 
@@ -105,7 +141,11 @@ import {
   Van,
   SetUp,
   ArrowDown,
-  UserFilled
+  UserFilled,
+  User,
+  Sell,
+  ShoppingCart,
+  House
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
