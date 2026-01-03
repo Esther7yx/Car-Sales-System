@@ -89,13 +89,13 @@ const routes = [
       {
         path: 'customers/add',
         name: 'CustomerAdd',
-        component: () => import('../views/customer/CustomerForm.vue'),
+        component: () => import('../views/customer/CustomerPageForm.vue'),
         meta: { title: '添加客户', requiresAuth: true }
       },
       {
         path: 'customers/edit/:id',
         name: 'CustomerEdit',
-        component: () => import('../views/customer/CustomerForm.vue'),
+        component: () => import('../views/customer/CustomerPageForm.vue'),
         meta: { title: '编辑客户', requiresAuth: true }
       },
       // --- 销售管理模块 ---
@@ -135,6 +135,12 @@ const routes = [
         name: 'PurchaseOrderDetail',
         component: () => import('../views/purchaseOrder/PurchaseOrderDetail.vue'),
         meta: { title: '进货订单详情', requiresAuth: true }
+      },
+      {
+        path: 'purchase-orders/edit/:id',
+        name: 'PurchaseOrderEdit',
+        component: () => import('../views/purchaseOrder/PurchaseOrderForm.vue'),
+        meta: { title: '编辑进货订单', requiresAuth: true }
       },
       // --- 仓库管理模块 ---
       {
@@ -186,6 +192,22 @@ router.beforeEach((to, from, next) => {
         path: '/login',
         query: { redirect: to.fullPath }
       })
+    } else {
+      next()
+    }
+  } else if (to.path === '/') {
+    // 处理根路径访问
+    const token = localStorage.getItem('token')
+    if (token) {
+      next('/dashboard')
+    } else {
+      next('/login')
+    }
+  } else if (to.path === '/login') {
+    // 如果用户已经登录但访问登录页，重定向到仪表板
+    const token = localStorage.getItem('token')
+    if (token) {
+      next('/dashboard')
     } else {
       next()
     }

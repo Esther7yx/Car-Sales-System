@@ -5,25 +5,12 @@
     </div>
 
     <el-form :model="form" :rules="rules" ref="formRef" label-width="120px">
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="仓库名称" prop="name">
-            <el-input v-model="form.name" placeholder="请输入仓库名称" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="仓库类型" prop="type">
-            <el-select v-model="form.type" placeholder="请选择仓库类型">
-              <el-option label="整车仓库" value="vehicle" />
-              <el-option label="配件仓库" value="parts" />
-              <el-option label="综合仓库" value="comprehensive" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-      </el-row>
+      <el-form-item label="仓库名称" prop="warehouseName">
+        <el-input v-model="form.warehouseName" placeholder="请输入仓库名称" />
+      </el-form-item>
 
-      <el-form-item label="仓库位置" prop="location">
-        <el-input v-model="form.location" placeholder="请输入仓库详细地址" />
+      <el-form-item label="仓库地址" prop="address">
+        <el-input v-model="form.address" placeholder="请输入仓库详细地址" />
       </el-form-item>
 
       <el-row :gutter="20">
@@ -39,13 +26,13 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="负责人" prop="manager">
-            <el-input v-model="form.manager" placeholder="请输入负责人姓名" />
+          <el-form-item label="负责人" prop="managerName">
+            <el-input v-model="form.managerName" placeholder="请输入负责人姓名" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="联系电话" prop="phone">
-            <el-input v-model="form.phone" placeholder="请输入联系电话" />
+          <el-form-item label="联系电话" prop="managerPhone">
+            <el-input v-model="form.managerPhone" placeholder="请输入联系电话" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -55,15 +42,6 @@
           <el-radio label="active">启用</el-radio>
           <el-radio label="inactive">停用</el-radio>
         </el-radio-group>
-      </el-form-item>
-
-      <el-form-item label="备注" prop="remarks">
-        <el-input
-          v-model="form.remarks"
-          type="textarea"
-          :rows="3"
-          placeholder="请输入备注信息"
-        />
       </el-form-item>
 
       <el-form-item>
@@ -78,6 +56,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { post, put, get } from '../../utils/request'
 
 const router = useRouter()
 const route = useRoute()
@@ -86,36 +65,37 @@ const formRef = ref()
 const isEdit = ref(false)
 
 const form = reactive({
-  name: '',
-  type: '',
-  location: '',
+  warehouseName: '',
+  address: '',
   capacity: 100,
-  manager: '',
-  phone: '',
-  status: 'active',
-  remarks: ''
+  managerName: '',
+  managerPhone: '',
+  status: 'active'
 })
 
 const rules = reactive({
-  name: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
-  type: [{ required: true, message: '请选择仓库类型', trigger: 'change' }],
-  location: [{ required: true, message: '请输入仓库位置', trigger: 'blur' }],
+  warehouseName: [{ required: true, message: '请输入仓库名称', trigger: 'blur' }],
+  address: [{ required: true, message: '请输入仓库位置', trigger: 'blur' }],
   capacity: [{ required: true, message: '请输入仓库容量', trigger: 'blur' }],
-  manager: [{ required: true, message: '请输入负责人', trigger: 'blur' }],
-  phone: [{ required: true, message: '请输入联系电话', trigger: 'blur' }]
+  managerName: [{ required: true, message: '请输入负责人', trigger: 'blur' }],
+  managerPhone: [{ required: true, message: '请输入联系电话', trigger: 'blur' }]
 })
 
 const handleSubmit = async () => {
   try {
     await formRef.value.validate()
     
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
+    if (isEdit.value) {
+      await put('/api/warehouse', form)
+      ElMessage.success('仓库更新成功')
+    } else {
+      await post('/api/warehouse', form)
+      ElMessage.success('仓库创建成功')
+    }
     
-    ElMessage.success(isEdit.value ? '仓库更新成功' : '仓库创建成功')
     router.push('/warehouses')
   } catch (error) {
-    ElMessage.error('表单验证失败')
+    ElMessage.error('表单提交失败：' + (error.response?.data?.message || error.message))
   }
 }
 
@@ -132,17 +112,22 @@ onMounted(() => {
 })
 
 const loadWarehouseData = async () => {
-  // 模拟加载仓库数据
-  Object.assign(form, {
-    name: '主仓库',
-    type: 'vehicle',
-    location: '北京市朝阳区',
-    capacity: 100,
-    manager: '张三',
-    phone: '13800138001',
-    status: 'active',
-    remarks: '主要存储整车'
-  })
+  try {
+    const response = await get(`/api/warehouse/${route.params.id}`)
+    const warehouse = response.data
+    
+    Object.assign(form, {
+      warehouseId: warehouse.warehouseId,
+      warehouseName: warehouse.warehouseName,
+      address: warehouse.address,
+      capacity: warehouse.capacity,
+      managerName: warehouse.managerName,
+      managerPhone: warehouse.managerPhone,
+      status: warehouse.status
+    })
+  } catch (error) {
+    ElMessage.error('加载仓库数据失败：' + (error.response?.data?.message || error.message))
+  }
 }
 </script>
 

@@ -107,7 +107,7 @@
             <span class="user-info">
               <el-avatar :size="32" :src="userAvatar" icon="UserFilled" />
               <span class="username">{{ userName }}</span>
-              <el-icon class="el-icon--right"><arrow-down /></el-icon>
+              <el-icon class="el-icon--right"><ArrowDown /></el-icon>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
@@ -132,7 +132,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useSystemStore, useUserStore } from '../store'
+import { useSystemStore, useUserStore } from '../store/index.js'
 import {
   Fold,
   Expand,
@@ -175,7 +175,23 @@ const pageTitle = computed(() => {
     'CarModelEdit': '编辑车型',
     'VehicleList': '车辆管理',
     'VehicleAdd': '添加车辆',
-    'VehicleEdit': '编辑车辆'
+    'VehicleEdit': '编辑车辆',
+    // 客户管理模块
+    'CustomerList': '客户管理',
+    'CustomerAdd': '添加客户',
+    'CustomerEdit': '编辑客户',
+    // 销售管理模块
+    'SaleOrderList': '销售管理',
+    'SaleOrderAdd': '添加销售订单',
+    'SaleOrderDetail': '销售订单详情',
+    // 进货管理模块
+    'PurchaseOrderList': '进货管理',
+    'PurchaseOrderAdd': '添加进货订单',
+    'PurchaseOrderDetail': '进货订单详情',
+    // 仓库管理模块
+    'WarehouseList': '仓库管理',
+    'WarehouseAdd': '添加仓库',
+    'WarehouseEdit': '编辑仓库'
   }
   return titleMap[routeName] || '当前页面'
 })

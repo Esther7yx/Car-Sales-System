@@ -90,4 +90,23 @@
                 (SELECT IFNULL(SUM(sale_price - purchase_price), 0) FROM vehicle WHERE status = 'sold') AS totalProfit
     </select>
 
+    <select id="selectAvailableVehicles" resultMap="VehicleWithDetailsResultMap">
+        SELECT
+            v.*,
+            cm.model_id AS cm_id,
+            cm.model_name,
+            cm.year AS cm_year,
+            cm.engine_type,
+            cm.transmission,
+            cm.fuel_type,
+            cm.guide_price,
+            m.manufacturer_id AS m_id,
+            m.manufacturer_name
+        FROM vehicle v
+                 LEFT JOIN car_model cm ON v.model_id = cm.model_id
+                 LEFT JOIN manufacturer m ON cm.manufacturer_id = m.manufacturer_id
+        WHERE v.status = 'in_stock'
+        ORDER BY v.created_at DESC
+    </select>
+
 </mapper>

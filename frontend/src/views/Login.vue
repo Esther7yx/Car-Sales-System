@@ -23,6 +23,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '../store'
 import { ElMessage } from 'element-plus'
 import { post } from '../utils/request'
+import { User, Lock } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userStore = useUserStore()

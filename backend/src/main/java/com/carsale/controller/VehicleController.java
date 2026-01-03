@@ -92,6 +92,15 @@ public class VehicleController {
     }
 
     /**
+     * 获取可售车辆列表（在库状态且未被预订）
+     */
+    @GetMapping("/available")
+    public Result<List<Vehicle>> getAvailableVehicles() {
+        List<Vehicle> vehicles = vehicleService.selectAvailableVehicles();
+        return Result.success(vehicles);
+    }
+
+    /**
      * 新增车辆信息
      * 【保留修复】手动设置创建/更新时间
      */

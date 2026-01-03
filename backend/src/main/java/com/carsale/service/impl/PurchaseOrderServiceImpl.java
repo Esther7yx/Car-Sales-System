@@ -109,8 +109,8 @@ public class PurchaseOrderServiceImpl extends ServiceImpl<PurchaseOrderMapper, P
                 break;
             case "cancelled":
                 purchaseOrder.setCancelTime(now);
-                // 更新车辆状态为取消
-                updateVehicleStatusByOrder(orderId, "cancelled");
+                // 更新车辆状态为取消（暂时注释，因为车辆表缺少purchase_order_id字段）
+                // updateVehicleStatusByOrder(orderId, "cancelled");
                 break;
         }
         

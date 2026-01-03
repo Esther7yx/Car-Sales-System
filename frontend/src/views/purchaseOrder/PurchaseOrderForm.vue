@@ -30,13 +30,13 @@
         </el-col>
       </el-row>
 
-      <el-form-item label="车辆信息" prop="vehicleId">
-        <el-select v-model="form.vehicleId" placeholder="请选择车辆" filterable @change="handleVehicleChange">
+      <el-form-item label="车型信息" prop="modelId">
+        <el-select v-model="form.modelId" placeholder="请选择车型" filterable @change="handleModelChange">
           <el-option
-            v-for="vehicle in availableVehicles"
-            :key="vehicle.vin"
-            :label="`${vehicle.brand} ${vehicle.model} - ${vehicle.vin}`"
-            :value="vehicle.vin"
+            v-for="model in availableModels"
+            :key="model.modelId"
+            :label="`${model.manufacturerName} ${model.modelName} ${model.year}`"
+            :value="model.modelId"
           />
         </el-select>
       </el-form-item>
@@ -54,17 +54,13 @@
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="付款方式" prop="paymentMethod">
-            <el-select v-model="form.paymentMethod" placeholder="请选择付款方式">
-              <el-option label="全款" value="full" />
-              <el-option label="分期" value="installment" />
-              <el-option label="贷款" value="loan" />
-            </el-select>
+          <el-form-item label="采购员" prop="purchaser">
+            <el-input v-model="form.purchaser" placeholder="请输入采购员姓名" />
           </el-form-item>
         </el-col>
         <el-col :span="8">
-          <el-form-item label="采购员" prop="purchaser">
-            <el-input v-model="form.purchaser" placeholder="请输入采购员姓名" />
+          <el-form-item label="备注" prop="remarks">
+            <el-input v-model="form.remarks" placeholder="请输入备注信息" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -90,6 +86,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { get, post } from '../../utils/request'
 
 const router = useRouter()
 const route = useRoute()
@@ -99,29 +96,28 @@ const isEdit = ref(false)
 
 const form = reactive({
   supplierId: '',
-  vehicleId: '',
+  modelId: '',
   purchaseDate: '',
   purchasePrice: 0,
-  paymentMethod: '',
   purchaser: '',
   remarks: ''
 })
 
 const rules = reactive({
   supplierId: [{ required: true, message: '请选择供应商', trigger: 'change' }],
-  vehicleId: [{ required: true, message: '请选择车辆', trigger: 'change' }],
+  modelId: [{ required: true, message: '请选择车型', trigger: 'change' }],
   purchaseDate: [{ required: true, message: '请选择进货日期', trigger: 'change' }],
   purchasePrice: [{ required: true, message: '请输入进货价格', trigger: 'blur' }],
-  paymentMethod: [{ required: true, message: '请选择付款方式', trigger: 'change' }]
+  purchaser: [{ required: true, message: '请输入采购员姓名', trigger: 'blur' }]
 })
 
 const suppliers = ref([])
-const availableVehicles = ref([])
+const availableModels = ref([])
 
-const handleVehicleChange = (vehicleId) => {
-  const vehicle = availableVehicles.value.find(v => v.vin === vehicleId)
-  if (vehicle) {
-    form.purchasePrice = vehicle.purchasePrice || 0
+const handleModelChange = (modelId) => {
+  const model = availableModels.value.find(m => m.modelId === modelId)
+  if (model) {
+    form.purchasePrice = model.guidePrice || 0
   }
 }
 
@@ -129,13 +125,29 @@ const handleSubmit = async () => {
   try {
     await formRef.value.validate()
     
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
+    // 生成订单编号（格式：PO + 时间戳）
+    const orderNumber = 'PO' + Date.now()
     
-    ElMessage.success(isEdit.value ? '进货订单更新成功' : '进货订单创建成功')
+    const purchaseOrderData = {
+      orderNumber: orderNumber,
+      manufacturerId: form.supplierId,
+      operatorId: 1, // 暂时使用固定操作员ID
+      paymentMethod: form.paymentMethod,
+      totalAmount: form.purchasePrice,
+      status: 'pending'
+    }
+    
+    if (isEdit.value) {
+      await post('/api/purchase', purchaseOrderData)
+      ElMessage.success('进货订单更新成功')
+    } else {
+      await post('/api/purchase', purchaseOrderData)
+      ElMessage.success('进货订单创建成功')
+    }
+    
     router.push('/purchase-orders')
   } catch (error) {
-    ElMessage.error('表单验证失败')
+    ElMessage.error('表单提交失败：' + (error.response?.data?.message || error.message))
   }
 }
 
@@ -152,21 +164,25 @@ const fetchSuppliers = async () => {
   ]
 }
 
-const fetchAvailableVehicles = async () => {
-  // 模拟获取可采购车辆数据
-  availableVehicles.value = [
-    { 
-      vin: '22222222222222222', 
-      brand: '宝马', 
-      model: '3系 2026款', 
-      purchasePrice: 200000 
-    }
-  ]
+const fetchAvailableModels = async () => {
+  try {
+    const response = await get('/api/car-models/page?current=1&size=100')
+    availableModels.value = response.data.records.map(model => ({
+      modelId: model.modelId,
+      manufacturerName: model.manufacturerName,
+      modelName: model.modelName,
+      year: model.year,
+      guidePrice: model.guidePrice
+    }))
+  } catch (error) {
+    ElMessage.error('获取车型列表失败')
+    availableModels.value = []
+  }
 }
 
 onMounted(() => {
   fetchSuppliers()
-  fetchAvailableVehicles()
+  fetchAvailableModels()
   
   if (route.params.id) {
     isEdit.value = true

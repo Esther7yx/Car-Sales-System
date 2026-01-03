@@ -12,7 +12,7 @@
             <el-card shadow="hover" class="stat-card">
               <div class="stat-content">
                 <div class="stat-icon car">
-                  <el-icon><CaretRight /></el-icon>
+                  <el-icon><i-ep-car /></el-icon>
                 </div>
                 <div class="stat-info">
                   <div class="stat-value">{{ totalVehicles }}</div>
@@ -25,7 +25,7 @@
             <el-card shadow="hover" class="stat-card">
               <div class="stat-content">
                 <div class="stat-icon inventory">
-                  <el-icon><CaretRight /></el-icon>
+                  <el-icon><i-ep-box /></el-icon>
                 </div>
                 <div class="stat-info">
                   <div class="stat-value">{{ inStockVehicles }}</div>
@@ -38,7 +38,7 @@
             <el-card shadow="hover" class="stat-card">
               <div class="stat-content">
                 <div class="stat-icon sale">
-                  <el-icon><CaretRight /></el-icon>
+                  <el-icon><i-ep-shopping-cart /></el-icon>
                 </div>
                 <div class="stat-info">
                   <div class="stat-value">{{ totalSales }}</div>
@@ -51,7 +51,7 @@
             <el-card shadow="hover" class="stat-card">
               <div class="stat-content">
                 <div class="stat-icon profit">
-                  <el-icon><CaretRight /></el-icon>
+                  <el-icon><i-ep-money /></el-icon>
                 </div>
                 <div class="stat-info">
                   <div class="stat-value">{{ formatMoney(totalProfit) }}</div>
@@ -70,7 +70,6 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { get } from '../utils/request'
-import { CaretRight } from '@element-plus/icons-vue'
 
 const totalVehicles = ref(0)
 const inStockVehicles = ref(0)

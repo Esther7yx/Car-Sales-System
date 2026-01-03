@@ -3,6 +3,9 @@ import { ref, computed } from 'vue'
 
 const pinia = createPinia()
 
+// 默认导出pinia实例
+export default pinia
+
 // 用户状态管理
 export const useUserStore = defineStore('user', () => {
   const token = ref(localStorage.getItem('token') || '')
@@ -71,5 +74,3 @@ export const useSystemStore = defineStore('system', () => {
     toggleSidebar
   }
 })
-
-export default pinia

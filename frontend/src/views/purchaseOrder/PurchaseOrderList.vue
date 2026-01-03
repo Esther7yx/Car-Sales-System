@@ -27,22 +27,22 @@
       </el-form>
     </div>
 
-    <el-table :data="tableData" v-loading="loading">
-      <el-table-column prop="orderNumber" label="订单号" width="180" />
-      <el-table-column prop="supplierName" label="供应商" />
-      <el-table-column prop="vehicleCount" label="车辆数量" width="100" />
-      <el-table-column prop="totalAmount" label="总金额" width="120">
+    <el-table :data="tableData" v-loading="loading" style="width: 100%">
+      <el-table-column prop="orderNumber" label="订单号" width="200" show-overflow-tooltip />
+      <el-table-column prop="supplierName" label="供应商" width="200" show-overflow-tooltip />
+      <el-table-column prop="vehicleCount" label="车辆数量" width="120" align="center" />
+      <el-table-column prop="totalAmount" label="总金额" width="150" align="right">
         <template #default="{ row }">
           ¥{{ formatAmount(row.totalAmount) }}
         </template>
       </el-table-column>
-      <el-table-column prop="status" label="状态" width="100">
+      <el-table-column prop="status" label="状态" width="120" align="center">
         <template #default="{ row }">
           <el-tag :type="getStatusType(row.status)">{{ getStatusText(row.status) }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="createTime" label="创建时间" width="180" />
-      <el-table-column label="操作" width="200" fixed="right">
+      <el-table-column label="操作" width="220" fixed="right" align="center">
         <template #default="{ row }">
           <el-button type="primary" link @click="handleDetail(row)">详情</el-button>
           <el-button type="warning" link @click="handleEdit(row)" v-if="row.status === 'pending'">编辑</el-button>
@@ -70,6 +70,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
+import { get, put } from '../../utils/request'
 
 const router = useRouter()
 
@@ -131,7 +132,7 @@ const handleDetail = (row) => {
 }
 
 const handleEdit = (row) => {
-  // 编辑逻辑
+  router.push(`/purchase-orders/edit/${row.orderId}`)
 }
 
 const handleDelete = async (row) => {
@@ -140,10 +141,14 @@ const handleDelete = async (row) => {
       type: 'warning'
     })
     // 调用取消订单API
+    await put(`/api/purchase/${row.orderId}/status?status=cancelled`)
     ElMessage.success('订单已取消')
     fetchData()
-  } catch {
-    // 用户取消操作
+  } catch (error) {
+    if (error !== 'cancel') {
+      console.error('取消订单失败:', error)
+      ElMessage.error('取消订单失败：' + (error.response?.data?.message || error.message))
+    }
   }
 }
 
@@ -160,21 +165,16 @@ const handleCurrentChange = (page) => {
 const fetchData = async () => {
   loading.value = true
   try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
-    tableData.value = [
-      {
-        id: 1,
-        orderNumber: 'PO202601010001',
-        supplierName: '奥迪厂商',
-        vehicleCount: 1,
-        totalAmount: 100000,
-        status: 'completed',
-        createTime: '2026-01-01 09:00:00'
-      }
-    ]
-    pagination.value.total = 1
+    const response = await get('/api/purchase/page', {
+      current: pagination.value.currentPage,
+      size: pagination.value.pageSize,
+      orderNumber: filterForm.value.supplierName,
+      status: filterForm.value.status
+    })
+    tableData.value = response.data.records
+    pagination.value.total = response.data.total
   } catch (error) {
+    console.error('获取数据失败:', error)
     ElMessage.error('获取数据失败')
   } finally {
     loading.value = false

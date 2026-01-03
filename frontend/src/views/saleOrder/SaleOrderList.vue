@@ -70,6 +70,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Plus } from '@element-plus/icons-vue'
+import { get } from '../../utils/request'
 
 const router = useRouter()
 
@@ -160,20 +161,14 @@ const handleCurrentChange = (page) => {
 const fetchData = async () => {
   loading.value = true
   try {
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
-    tableData.value = [
-      {
-        id: 1,
-        orderNumber: 'SO202601020001',
-        customerName: '张三',
-        vehicleInfo: '奥迪A3 2026款',
-        totalAmount: 130000,
-        status: 'completed',
-        createTime: '2026-01-01 10:30:00'
-      }
-    ]
-    pagination.value.total = 1
+    const response = await get('/api/sale/page', {
+      current: pagination.value.currentPage,
+      size: pagination.value.pageSize,
+      customerName: filterForm.value.customerName,
+      status: filterForm.value.status
+    })
+    tableData.value = response.data.records
+    pagination.value.total = response.data.total
   } catch (error) {
     ElMessage.error('获取数据失败')
   } finally {

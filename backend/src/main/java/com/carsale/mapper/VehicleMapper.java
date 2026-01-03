@@ -27,4 +27,10 @@ public interface VehicleMapper extends BaseMapper<Vehicle> {
      * @return 包含各项统计指标的Map
      */
     Map<String, Object> selectDashboardStats();
+
+    /**
+     * 【新增】获取可售车辆列表（在库状态）
+     * @return 可售车辆列表
+     */
+    List<Vehicle> selectAvailableVehicles();
 }

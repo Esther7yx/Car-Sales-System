@@ -56,7 +56,7 @@
         <el-col :span="8">
           <el-form-item label="付款方式" prop="paymentMethod">
             <el-select v-model="form.paymentMethod" placeholder="请选择付款方式">
-              <el-option label="全款" value="full" />
+              <el-option label="现金" value="cash" />
               <el-option label="分期" value="installment" />
               <el-option label="贷款" value="loan" />
             </el-select>
@@ -90,6 +90,8 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import { get, post } from '../../utils/request'
+import { customerApi } from '../../api/customer'
 
 const router = useRouter()
 const route = useRoute()
@@ -129,13 +131,29 @@ const handleSubmit = async () => {
   try {
     await formRef.value.validate()
     
-    // 模拟API调用
-    await new Promise(resolve => setTimeout(resolve, 500))
+    // 生成订单编号（格式：SO + 时间戳）
+    const orderNumber = 'SO' + Date.now()
     
-    ElMessage.success(isEdit.value ? '销售订单更新成功' : '销售订单创建成功')
+    const saleOrderData = {
+      orderNumber: orderNumber,
+      customerId: form.customerId,
+      operatorId: 1, // 暂时使用固定操作员ID
+      paymentMethod: form.paymentMethod,
+      totalAmount: form.salePrice,
+      status: 'pending'
+    }
+    
+    if (isEdit.value) {
+      await post('/api/sale', saleOrderData)
+      ElMessage.success('销售订单更新成功')
+    } else {
+      await post('/api/sale', saleOrderData)
+      ElMessage.success('销售订单创建成功')
+    }
+    
     router.push('/sale-orders')
   } catch (error) {
-    ElMessage.error('表单验证失败')
+    ElMessage.error('表单提交失败：' + (error.response?.data?.message || error.message))
   }
 }
 
@@ -144,24 +162,32 @@ const handleCancel = () => {
 }
 
 const fetchCustomers = async () => {
-  // 模拟获取客户数据
-  customers.value = [
-    { id: 1, name: '张三', phone: '13800138001' },
-    { id: 2, name: '李四', phone: '13800138002' },
-    { id: 3, name: '王五', phone: '13800138003' }
-  ]
+  try {
+    const response = await get('/api/customer/page?current=1&size=100')
+    customers.value = response.data.records.map(customer => ({
+      id: customer.customerId,
+      name: customer.name,
+      phone: customer.phone
+    }))
+  } catch (error) {
+    ElMessage.error('获取客户列表失败')
+    customers.value = []
+  }
 }
 
 const fetchAvailableVehicles = async () => {
-  // 模拟获取可售车辆数据
-  availableVehicles.value = [
-    { 
-      vin: '11111111111111111', 
-      brand: '奥迪', 
-      model: 'A3 2026款', 
-      salePrice: 130000 
-    }
-  ]
+  try {
+    const response = await get('/api/vehicles/available')
+    availableVehicles.value = response.data.map(vehicle => ({
+      vin: vehicle.vin,
+      brand: vehicle.brand,
+      model: vehicle.model,
+      salePrice: vehicle.salePrice
+    }))
+  } catch (error) {
+    ElMessage.error('获取可售车辆列表失败')
+    availableVehicles.value = []
+  }
 }
 
 onMounted(() => {

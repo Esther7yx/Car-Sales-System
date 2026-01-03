@@ -18,4 +18,7 @@ public interface VehicleService extends IService<Vehicle> {
 
     // 【新增】获取仪表盘统计数据
     Map<String, Object> getDashboardStats();
+    
+    // 【新增】获取可售车辆列表（在库状态）
+    List<Vehicle> selectAvailableVehicles();
 }

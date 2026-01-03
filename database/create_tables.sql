@@ -6,8 +6,8 @@ SET character_set_results=utf8mb4;
 SET character_set_client=utf8mb4;
 
 -- 创建数据库
-CREATE DATABASE IF NOT EXISTS car_sale_system DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE car_sale_system;
+CREATE DATABASE IF NOT EXISTS car_sales DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE car_sales;
 
 -- 【新增】先禁用外键检查，强制删除所有旧表，防止重复和冲突
 SET FOREIGN_KEY_CHECKS=0;
@@ -211,7 +211,23 @@ CREATE TABLE IF NOT EXISTS operation_log (
     INDEX idx_log_created_at (created_at)
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- 12. 采购订单明细表 (purchase_order_detail)
+-- 12. 仓库信息表 (warehouse)
+CREATE TABLE IF NOT EXISTS warehouse (
+    warehouse_id INT PRIMARY KEY AUTO_INCREMENT,
+    warehouse_name VARCHAR(200) NOT NULL,
+    address VARCHAR(1000) NOT NULL,
+    capacity INT NOT NULL,
+    current_stock INT NOT NULL DEFAULT 0,
+    manager_name VARCHAR(100) NOT NULL,
+    manager_phone VARCHAR(30) NOT NULL,
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_warehouse_name (warehouse_name),
+    INDEX idx_warehouse_status (status)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 13. 采购订单明细表 (purchase_order_detail)
 CREATE TABLE IF NOT EXISTS purchase_order_detail (
     detail_id INT PRIMARY KEY AUTO_INCREMENT,
     order_id INT NOT NULL,
@@ -231,33 +247,39 @@ ALTER TABLE sale_order ADD FOREIGN KEY (operator_id) REFERENCES system_user(user
 
 -- 添加一些示例数据
 INSERT INTO manufacturer (manufacturer_name, contact_person, contact_phone, address, cooperation_status) VALUES
-('上海大众', '张三', '13800138001', '上海市浦东新区张江高科技园区', 'active'),
-('一汽丰田', '李四', '13800138002', '吉林省长春市绿园区', 'active'),
-('广州本田', '王五', '13800138003', '广东省广州市黄埔区', 'active');
+('Shanghai Volkswagen', 'Zhang San', '13800138001', 'Shanghai Zhangjiang High-tech Park', 'active'),
+('FAW Toyota', 'Li Si', '13800138002', 'Changchun City, Jilin Province', 'active'),
+('Guangzhou Honda', 'Wang Wu', '13800138003', 'Guangzhou City, Guangdong Province', 'active');
 
 INSERT INTO car_model (manufacturer_id, model_name, year, engine_type, transmission, fuel_type, guide_price, features) VALUES
-(1, '帕萨特', 2023, '1.4T', '7速双离合', '汽油', 189900.00, '{"seats": 5, "safety": ["ABS", "ESP"], "comfort": ["自动空调", "真皮座椅"]}'),
-(1, '途观L', 2023, '2.0T', '7速双离合', '汽油', 215800.00, '{"seats": 5, "safety": ["ABS", "ESP", "气囊×6"], "comfort": ["全景天窗", "电动座椅"]}'),
-(2, '卡罗拉', 2023, '1.2T', 'CVT', '汽油', 109800.00, '{"seats": 5, "safety": ["ABS", "ESP"], "comfort": ["手动空调", "织物座椅"]}'),
-(2, '凯美瑞', 2023, '2.0L', 'CVT', '汽油', 179800.00, '{"seats": 5, "safety": ["ABS", "ESP", "气囊×8"], "comfort": ["自动空调", "真皮座椅"]}'),
-(3, '雅阁', 2023, '1.5T', 'CVT', '汽油', 169800.00, '{"seats": 5, "safety": ["ABS", "ESP", "气囊×6"], "comfort": ["自动空调", "真皮座椅"]}');
+(1, 'Passat', 2023, '1.4T', '7-speed dual-clutch', 'Gasoline', 189900.00, '{"seats": 5, "safety": ["ABS", "ESP"], "comfort": ["Auto AC", "Leather Seats"]}'),
+(1, 'Tiguan L', 2023, '2.0T', '7-speed dual-clutch', 'Gasoline', 215800.00, '{"seats": 5, "safety": ["ABS", "ESP", "Airbags x6"], "comfort": ["Panoramic Sunroof", "Power Seats"]}'),
+(2, 'Corolla', 2023, '1.2T', 'CVT', 'Gasoline', 109800.00, '{"seats": 5, "safety": ["ABS", "ESP"], "comfort": ["Manual AC", "Fabric Seats"]}'),
+(2, 'Camry', 2023, '2.0L', 'CVT', 'Gasoline', 179800.00, '{"seats": 5, "safety": ["ABS", "ESP", "Airbags x8"], "comfort": ["Auto AC", "Leather Seats"]}'),
+(3, 'Accord', 2023, '1.5T', 'CVT', 'Gasoline', 169800.00, '{"seats": 5, "safety": ["ABS", "ESP", "Airbags x6"], "comfort": ["Auto AC", "Leather Seats"]}');
 
 INSERT INTO system_user (username, password, real_name, role, status) VALUES
-('admin', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '系统管理员', 'admin', 'active'),
-('sales001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '销售员小李', 'sales', 'active'),
-('warehouse001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '仓库管理员小王', 'warehouse', 'active'),
-('finance001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '财务小张', 'finance', 'active'),
-('manager001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '经理老刘', 'manager', 'active');
+('admin', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', 'System Admin', 'admin', 'active'),
+('sales001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', 'Sales Li', 'sales', 'active'),
+('warehouse001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', 'Warehouse Wang', 'warehouse', 'active'),
+('finance001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', 'Finance Zhang', 'finance', 'active'),
+('manager001', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', 'Manager Liu', 'manager', 'active');
 
 INSERT INTO permission (role, resource, action, description) VALUES
-('admin', 'manufacturer', 'read', '查看厂商信息'),
-('admin', 'manufacturer', 'create', '创建厂商信息'),
-('admin', 'manufacturer', 'update', '更新厂商信息'),
-('admin', 'manufacturer', 'delete', '删除厂商信息'),
-('sales', 'vehicle', 'read', '查看车辆信息'),
-('sales', 'sale_order', 'create', '创建销售订单'),
-('sales', 'sale_order', 'update', '更新销售订单'),
-('warehouse', 'vehicle', 'read', '查看车辆信息'),
-('warehouse', 'inventory_log', 'create', '记录库存流水'),
-('finance', 'sale_order', 'read', '查看销售订单'),
-('finance', 'payment', 'process', '处理支付');
+('admin', 'manufacturer', 'read', 'View manufacturer info'),
+('admin', 'manufacturer', 'create', 'Create manufacturer info'),
+('admin', 'manufacturer', 'update', 'Update manufacturer info'),
+('admin', 'manufacturer', 'delete', 'Delete manufacturer info'),
+('sales', 'vehicle', 'read', 'View vehicle info'),
+('sales', 'sale_order', 'create', 'Create sale order'),
+('sales', 'sale_order', 'update', 'Update sale order'),
+('warehouse', 'vehicle', 'read', 'View vehicle info'),
+('warehouse', 'inventory_log', 'create', 'Record inventory log'),
+('finance', 'sale_order', 'read', 'View sale order'),
+('finance', 'payment', 'process', 'Process payment');
+
+-- 添加仓库示例数据
+INSERT INTO warehouse (warehouse_name, address, capacity, current_stock, manager_name, manager_phone, status) VALUES
+('Shanghai Pudong Warehouse', 'Shanghai Zhangjiang High-tech Park', 500, 0, 'Manager Zhang', '13800138001', 'active'),
+('Beijing Chaoyang Warehouse', 'Beijing CBD Business District', 200, 0, 'Manager Li', '13800138002', 'active'),
+('Guangzhou Tianhe Warehouse', 'Guangzhou Pearl River New City', 300, 0, 'Manager Wang', '13800138003', 'active');

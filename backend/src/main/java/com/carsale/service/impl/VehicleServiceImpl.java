@@ -59,4 +59,10 @@ public class VehicleServiceImpl extends ServiceImpl<VehicleMapper, Vehicle> impl
     public Map<String, Object> getDashboardStats() {
         return this.baseMapper.selectDashboardStats();
     }
+
+    // 【新增】获取可售车辆列表（在库状态且未被预订）
+    @Override
+    public List<Vehicle> selectAvailableVehicles() {
+        return this.baseMapper.selectAvailableVehicles();
+    }
 }
