@@ -57,13 +57,23 @@
           <el-menu-item index="/car-models/add">添加车型</el-menu-item>
         </el-sub-menu>
 
-        <el-sub-menu index="vehicle">
+        <el-sub-menu index="sale">
           <template #title>
-            <el-icon><Van /></el-icon>
-            <span>车辆管理</span>
+            <el-icon><Money /></el-icon>
+            <span>销售管理</span>
           </template>
-          <el-menu-item index="/vehicles">车辆列表</el-menu-item>
-          <el-menu-item index="/vehicles/add">添加车辆</el-menu-item>
+          <el-menu-item index="/sales">销售订单</el-menu-item>
+          <el-menu-item index="/sales/create">新建销售单</el-menu-item>
+        </el-sub-menu>
+
+        <el-sub-menu index="warehouse">
+          <template #title>
+            <el-icon><House /></el-icon>
+            <span>仓库管理</span>
+          </template>
+          <el-menu-item index="/warehouse/inventory">库存车辆</el-menu-item>
+          <el-menu-item index="/warehouse/details">仓库明细</el-menu-item>
+          <el-menu-item index="/warehouse/stats">进销存统计</el-menu-item>
         </el-sub-menu>
       </el-menu>
     </div>
@@ -120,12 +130,13 @@ import {
   Expand,
   Odometer,
   OfficeBuilding,
-  Van,
   SetUp,
   ArrowDown,
   UserFilled,
-  User ,
-  ShoppingCart
+  User,
+  ShoppingCart,
+  House,
+  Money
 } from '@element-plus/icons-vue'
 
 const route = useRoute()
@@ -133,48 +144,25 @@ const router = useRouter()
 const systemStore = useSystemStore()
 const userStore = useUserStore()
 
-// 侧边栏折叠状态
 const sidebarCollapsed = computed(() => systemStore.sidebarCollapsed)
-
-// 当前激活的菜单 (根据路由路径高亮)
 const activeMenu = computed(() => route.path)
 
-// 页面标题 (从路由 meta 中获取，如果未定义则使用默认映射)
 const pageTitle = computed(() => {
   if (route.meta && route.meta.title) {
     return route.meta.title
   }
+  // 简单的兜底映射
   const routeName = route.name
-  const titleMap = {
-    'Dashboard': '系统概览',
-    'PurchaseList': '进货管理',
-    'PurchaseAdd': '新建采购单',
-    'ManufacturerList': '厂商管理',
-    'ManufacturerAdd': '添加厂商',
-    'ManufacturerEdit': '编辑厂商',
-    'CustomerList': '客户管理',
-    'CustomerAdd': '添加客户',
-    'CustomerEdit': '编辑客户',
-    'CarModelList': '车型管理',
-    'CarModelAdd': '添加车型',
-    'CarModelEdit': '编辑车型',
-    'VehicleList': '车辆管理',
-    'VehicleAdd': '添加车辆',
-    'VehicleEdit': '编辑车辆'
-  }
-  return titleMap[routeName] || '当前页面'
+  return routeName || '当前页面'
 })
 
-// 用户信息
 const userName = computed(() => userStore.userInfo?.realName || userStore.userInfo?.username || '管理员')
 const userAvatar = computed(() => '')
 
-// 切换侧边栏
 const toggleSidebar = () => {
   systemStore.toggleSidebar()
 }
 
-// 退出登录
 const handleLogout = () => {
   userStore.logout()
   router.push('/login')

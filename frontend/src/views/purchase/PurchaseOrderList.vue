@@ -9,8 +9,9 @@
       <el-form :inline="true" :model="searchForm">
         <el-form-item label="状态">
           <el-select v-model="searchForm.status" placeholder="全部状态" clearable>
-            <el-option label="待入库" value="pending" />
+            <el-option label="待处理" value="pending" />
             <el-option label="已入库" value="received" />
+            <el-option label="已撤销" value="cancelled" />
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -28,23 +29,37 @@
         </el-table-column>
         <el-table-column prop="status" label="状态" width="100" align="center">
           <template #default="scope">
-            <el-tag :type="scope.row.status === 'received' ? 'success' : 'warning'">
-              {{ scope.row.status === 'received' ? '已入库' : '待入库' }}
-            </el-tag>
+            <el-tag type="success" v-if="scope.row.status === 'received'">已入库</el-tag>
+            <el-tag type="warning" v-else-if="scope.row.status === 'pending'">待处理</el-tag>
+            <el-tag type="info" v-else-if="scope.row.status === 'cancelled'">已撤销</el-tag>
+            <el-tag v-else>{{ scope.row.status }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180" align="center" />
-        <el-table-column label="操作" width="200" align="center" fixed="right">
+        <el-table-column prop="createTime" label="创建时间" width="180" align="center">
+          <template #default="scope">{{ formatDate(scope.row.createTime) }}</template>
+        </el-table-column>
+        <el-table-column label="操作" width="250" align="center" fixed="right">
           <template #default="scope">
-            <el-button size="small" @click="showDetails(scope.row)">查看明细</el-button>
-            <el-button
-                v-if="scope.row.status === 'pending'"
-                type="success"
-                size="small"
-                @click="openReceiveDialog(scope.row)"
-            >
-              入库
-            </el-button>
+            <el-button size="small" @click="showDetails(scope.row)">明细</el-button>
+
+            <template v-if="scope.row.status === 'pending'">
+              <el-button
+                  type="success"
+                  size="small"
+                  @click="openReceiveDialog(scope.row)"
+              >
+                同意
+              </el-button>
+              <el-popconfirm
+                  title="确定要撤销此采购单吗？"
+                  @confirm="handleCancel(scope.row)"
+              >
+                <template #reference>
+                  <el-button type="danger" size="small">撤销</el-button>
+                </template>
+              </el-popconfirm>
+            </template>
+
           </template>
         </el-table-column>
       </el-table>
@@ -75,12 +90,13 @@
 
     <el-dialog
         v-model="receiveVisible"
-        title="车辆入库确认"
+        title="审核通过 - 确认入库信息"
         width="800px"
         :close-on-click-modal="false"
     >
-      <div style="margin-bottom: 15px; color: #666;">
-        系统已自动生成 VIN 码，请确认信息后点击提交。
+      <div style="margin-bottom: 15px; color: #666; background: #e1f3d8; padding: 10px; border-radius: 4px;">
+        <el-icon><InfoFilled /></el-icon>
+        同意采购单将自动生成库存记录。系统已自动生成 VIN 码，请确认无误后点击“确认同意”。
       </div>
       <el-table :data="receiveList" border height="400">
         <el-table-column type="index" label="序号" width="60" />
@@ -95,15 +111,15 @@
             <el-input v-model="scope.row.price" disabled />
           </template>
         </el-table-column>
-        <el-table-column label="库位" width="150">
+        <el-table-column label="库位备注" width="150">
           <template #default="scope">
-            <el-input v-model="scope.row.location" placeholder="例如: A-01" />
+            <el-input v-model="scope.row.location" placeholder="例如: A区" />
           </template>
         </el-table-column>
       </el-table>
       <template #footer>
         <el-button @click="receiveVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitting" @click="submitReceive">确认入库</el-button>
+        <el-button type="success" :loading="submitting" @click="submitReceive">确认同意并入库</el-button>
       </template>
     </el-dialog>
   </div>
@@ -113,6 +129,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { get, post } from '../../utils/request'
 import { ElMessage } from 'element-plus'
+import { InfoFilled } from '@element-plus/icons-vue'
 
 const loading = ref(false)
 const tableData = ref([])
@@ -125,11 +142,16 @@ const currentDetails = ref([])
 
 // 入库相关
 const receiveVisible = ref(false)
-const receiveList = ref([]) // 展开后的具体车辆列表
+const receiveList = ref([])
 const currentOrderId = ref(null)
 const submitting = ref(false)
 
 onMounted(() => fetchData())
+
+const formatDate = (val) => {
+  if(!val) return ''
+  return new Date(val).toLocaleString('zh-CN', { hour12: false })
+}
 
 // 获取列表
 const fetchData = async () => {
@@ -156,25 +178,46 @@ const showDetails = async (row) => {
   detailVisible.value = true
 }
 
-// 打开入库弹窗：自动生成车辆明细
+// 撤销操作
+const handleCancel = async (row) => {
+  try {
+    await post(`/api/purchase-orders/${row.orderId}/cancel`)
+    ElMessage.success('撤销成功')
+    fetchData()
+  } catch (err) {
+    ElMessage.error('撤销失败')
+  }
+}
+
+// 打开“同意”弹窗（复用入库逻辑）
 const openReceiveDialog = async (row) => {
   currentOrderId.value = row.orderId
   try {
-    // 1. 获取订单买了什么车
     const res = await get(`/api/purchase-orders/${row.orderId}/details`)
     const details = res.data
 
-    // 2. 在前端“展开”成具体的车辆列表
     const list = []
+    // 获取当前时间戳
+    const timestamp = Date.now().toString().slice(-6)
+
+    // 全局计数器，确保循环内唯一
+    let globalIndex = 0
+
     details.forEach(item => {
       for (let i = 0; i < item.quantity; i++) {
+        globalIndex++
+        // 【修改】VIN生成逻辑：加入 globalIndex 避免同一毫秒内的重复
+        // 格式：VIN + 时间戳后6位 + 索引(2位) + 随机数(3位)
+        const uniqueVin = 'VIN' + timestamp +
+            globalIndex.toString().padStart(2, '0') +
+            Math.floor(Math.random() * 1000).toString().padStart(3, '0')
+
         list.push({
           model_id: item.model_id,
           modelName: item.model_name,
           price: item.unit_price,
-          // 自动生成 VIN: 年月日 + 随机数
-          vin: 'VIN' + Date.now().toString().slice(-6) + Math.floor(Math.random()*1000),
-          location: 'A-' + Math.floor(Math.random() * 99 + 1) // 随机库位
+          vin: uniqueVin, // 使用更唯一的VIN
+          location: '默认库位'
         })
       }
     })
@@ -185,19 +228,19 @@ const openReceiveDialog = async (row) => {
   }
 }
 
-// 提交入库
+// 提交同意（入库）
 const submitReceive = async () => {
   submitting.value = true
   try {
     await post(`/api/purchase-orders/${currentOrderId.value}/receive`, {
       vehicleList: receiveList.value
     })
-    ElMessage.success('入库成功！库存已更新')
+    ElMessage.success('操作成功！仓库数据已同步')
     receiveVisible.value = false
-    fetchData() // 刷新列表
+    fetchData()
   } catch (err) {
     console.error(err)
-    ElMessage.error('入库失败')
+    ElMessage.error('操作失败')
   } finally {
     submitting.value = false
   }

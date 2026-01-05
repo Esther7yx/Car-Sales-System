@@ -41,7 +41,7 @@ const routes = [
         component: () => import('../views/manufacturer/ManufacturerForm.vue'),
         meta: { title: '编辑厂商', requiresAuth: true }
       },
-      // --- 【新增】客户管理模块 ---
+      // --- 客户管理模块 ---
       {
         path: 'customers',
         name: 'CustomerList',
@@ -79,24 +79,38 @@ const routes = [
         component: () => import('../views/carModel/CarModelForm.vue'),
         meta: { title: '编辑车型', requiresAuth: true }
       },
-      // --- 车辆管理模块 ---
+      // --- 【新增】仓库管理模块 (替代原有的车辆管理) ---
       {
-        path: 'vehicles',
-        name: 'VehicleList',
-        component: () => import('../views/vehicle/VehicleList.vue'),
-        meta: { title: '车辆管理', requiresAuth: true }
+        path: 'warehouse/inventory', // 库存车辆 (按车型统计)
+        name: 'InventoryList',
+        component: () => import('../views/warehouse/InventoryList.vue'),
+        meta: { title: '库存车辆', requiresAuth: true }
       },
       {
-        path: 'vehicles/add',
-        name: 'VehicleAdd',
-        component: () => import('../views/vehicle/VehicleForm.vue'),
-        meta: { title: '车辆入库', requiresAuth: true }
+        path: 'warehouse/details',   // 仓库明细 (具体每一辆车)
+        name: 'WarehouseDetailList',
+        component: () => import('../views/warehouse/WarehouseDetailList.vue'),
+        meta: { title: '仓库明细', requiresAuth: true }
       },
       {
-        path: 'vehicles/edit/:vin',
-        name: 'VehicleEdit',
-        component: () => import('../views/vehicle/VehicleForm.vue'),
-        meta: { title: '编辑车辆', requiresAuth: true }
+        path: 'warehouse/stats',     // 进销存统计
+        name: 'WarehouseStats',
+        component: () => import('../views/warehouse/WarehouseStats.vue'),
+        meta: { title: '进销存统计', requiresAuth: true }
+      },
+
+      // --- 销售管理模块 ---
+      {
+        path: 'sales',
+        name: 'SaleOrderList',
+        component: () => import('../views/sale/SaleOrderList.vue'),
+        meta: { title: '销售订单', requiresAuth: true }
+      },
+      {
+        path: 'sales/create',
+        name: 'SaleOrderCreate',
+        component: () => import('../views/sale/SaleOrderForm.vue'),
+        meta: { title: '新建销售单', requiresAuth: true }
       },
       // --- 进货管理模块 ---
       {
@@ -128,16 +142,12 @@ const router = createRouter({
   routes
 })
 
-// 路由守卫：处理登录验证和页面标题
+// 路由守卫
 router.beforeEach((to, from, next) => {
-  // 设置浏览器标题
   document.title = `${to.meta.title || '系统'} - 汽车销售管理系统`
-
-  // 检查路由是否需要认证
   if (to.matched.some(record => record.meta.requiresAuth)) {
     const token = localStorage.getItem('token')
     if (!token) {
-      // 未登录，跳转到登录页，并记录原目标路径
       next({
         path: '/login',
         query: { redirect: to.fullPath }

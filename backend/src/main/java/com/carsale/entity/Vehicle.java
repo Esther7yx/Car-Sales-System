@@ -30,7 +30,7 @@ public class Vehicle {
     private BigDecimal purchasePrice;
 
     /**
-     * 销售价格，CHECK约束保证销售价≥采购价
+     * 销售价格 (实际成交价)
      */
     @TableField("sale_price")
     private BigDecimal salePrice;
@@ -48,13 +48,13 @@ public class Vehicle {
     private String warehouseLocation;
 
     /**
-     * 采购日期
+     * 采购日期 (入库日期)
      */
     @TableField("purchase_date")
     private LocalDate purchaseDate;
 
     /**
-     * 销售日期
+     * 销售日期 (出库日期)
      */
     @TableField("sale_date")
     private LocalDate saleDate;
@@ -83,7 +83,8 @@ public class Vehicle {
     @TableField(exist = false)
     private Manufacturer manufacturer;
 
-    // getter and setter methods
+    // --- Getters and Setters ---
+
     public String getVin() {
         return vin;
     }

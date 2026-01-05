@@ -2,13 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.carsale.mapper.SaleOrderMapper">
 
-    <select id="createSaleOrder" statementType="CALLABLE">
-        {call process_sale_order(
-                #{customerId, mode=IN, jdbcType=INTEGER},
-                #{operatorId, mode=IN, jdbcType=INTEGER},
-                #{paymentMethod, mode=IN, jdbcType=VARCHAR},
-                #{saleItemsJson, mode=IN, jdbcType=OTHER}
-              )}
+    <select id="selectOrderPage" resultType="com.carsale.entity.SaleOrder">
+        SELECT
+        so.*,
+        c.name AS customerName,
+        c.phone AS customerPhone,
+        u.real_name AS operatorName
+        FROM sale_order so
+        LEFT JOIN customer c ON so.customer_id = c.customer_id
+        LEFT JOIN system_user u ON so.operator_id = u.user_id
+        <where>
+            <if test="orderNumber != null and orderNumber != ''">
+                AND so.order_number LIKE CONCAT('%', #{orderNumber}, '%')
+            </if>
+        </where>
+        ORDER BY so.create_time DESC
+    </select>
+
+    <select id="selectOrderDetails" resultType="java.util.Map">
+        SELECT
+            sd.detail_id,
+            sd.vin,
+            cm.model_name,
+            sd.unit_price,
+            sd.subtotal,
+            v.purchase_price
+        FROM sale_detail sd
+                 LEFT JOIN vehicle v ON sd.vin = v.vin
+                 LEFT JOIN car_model cm ON v.model_id = cm.model_id
+        WHERE sd.sale_id = #{saleId}
     </select>
 
 </mapper>

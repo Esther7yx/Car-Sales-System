@@ -8,25 +8,25 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 采购订单实体类
+ * 销售订单实体类
  */
-@TableName("purchase_order")
-public class PurchaseOrder {
+@TableName("sale_order")
+public class SaleOrder {
     /**
-     * 采购单ID (主键)
+     * 销售单ID
      */
     @TableId(type = IdType.AUTO)
-    private Integer orderId;
+    private Integer saleId;
 
     /**
-     * 采购单号
+     * 订单号
      */
     private String orderNumber;
 
     /**
-     * 厂商ID
+     * 客户ID
      */
-    private Integer manufacturerId;
+    private Integer customerId;
 
     /**
      * 操作员ID
@@ -39,7 +39,12 @@ public class PurchaseOrder {
     private BigDecimal totalAmount;
 
     /**
-     * 状态 (pending, received, cancelled)
+     * 支付方式 (cash, loan, installment)
+     */
+    private String paymentMethod;
+
+    /**
+     * 状态 (pending, paid, delivered, cancelled)
      */
     private String status;
 
@@ -48,18 +53,29 @@ public class PurchaseOrder {
      */
     private LocalDateTime createTime;
 
+    /**
+     * 交付时间
+     */
+    private LocalDateTime deliveryTime;
+
     // ---------------------------------------------------------
     // 以下为非数据库字段 (用于列表展示)，必须加 @TableField(exist = false)
     // ---------------------------------------------------------
 
     /**
-     * 厂商名称 (关联查询得出)
+     * 客户姓名
      */
     @TableField(exist = false)
-    private String manufacturerName;
+    private String customerName;
 
     /**
-     * 操作员姓名 (关联查询得出)
+     * 客户电话
+     */
+    @TableField(exist = false)
+    private String customerPhone;
+
+    /**
+     * 操作员姓名
      */
     @TableField(exist = false)
     private String operatorName;
@@ -68,12 +84,12 @@ public class PurchaseOrder {
     // Getters and Setters
     // ---------------------------------------------------------
 
-    public Integer getOrderId() {
-        return orderId;
+    public Integer getSaleId() {
+        return saleId;
     }
 
-    public void setOrderId(Integer orderId) {
-        this.orderId = orderId;
+    public void setSaleId(Integer saleId) {
+        this.saleId = saleId;
     }
 
     public String getOrderNumber() {
@@ -84,12 +100,12 @@ public class PurchaseOrder {
         this.orderNumber = orderNumber;
     }
 
-    public Integer getManufacturerId() {
-        return manufacturerId;
+    public Integer getCustomerId() {
+        return customerId;
     }
 
-    public void setManufacturerId(Integer manufacturerId) {
-        this.manufacturerId = manufacturerId;
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
     public Integer getOperatorId() {
@@ -108,6 +124,14 @@ public class PurchaseOrder {
         this.totalAmount = totalAmount;
     }
 
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -124,12 +148,28 @@ public class PurchaseOrder {
         this.createTime = createTime;
     }
 
-    public String getManufacturerName() {
-        return manufacturerName;
+    public LocalDateTime getDeliveryTime() {
+        return deliveryTime;
     }
 
-    public void setManufacturerName(String manufacturerName) {
-        this.manufacturerName = manufacturerName;
+    public void setDeliveryTime(LocalDateTime deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
     }
 
     public String getOperatorName() {

@@ -20,31 +20,15 @@
 
     <select id="selectOrderDetails" resultType="java.util.Map">
         SELECT
-            d.detail_id,
-            d.model_id,
+            pod.detail_id,
+            pod.model_id,
             cm.model_name,
-            d.quantity,
-            d.unit_price,
-            d.subtotal
-        FROM purchase_order_detail d
-                 LEFT JOIN car_model cm ON d.model_id = cm.model_id
-        WHERE d.order_id = #{orderId}
-    </select>
-
-    <select id="createPurchaseOrder" statementType="CALLABLE" resultType="java.util.Map">
-        {call proc_create_purchase_order(
-                #{manufacturerId, mode=IN, jdbcType=INTEGER},
-                #{operatorId, mode=IN, jdbcType=INTEGER},
-                #{itemsJson, mode=IN, jdbcType=OTHER}
-              )}
-    </select>
-
-    <select id="receivePurchaseBatch" statementType="CALLABLE">
-        {call proc_receive_purchase_batch(
-                #{orderId, mode=IN, jdbcType=INTEGER},
-                #{operatorId, mode=IN, jdbcType=INTEGER},
-                #{vehicleListJson, mode=IN, jdbcType=OTHER}
-              )}
+            pod.quantity,
+            pod.unit_price,
+            pod.subtotal
+        FROM purchase_order_detail pod
+                 LEFT JOIN car_model cm ON pod.model_id = cm.model_id
+        WHERE pod.order_id = #{orderId}
     </select>
 
 </mapper>
