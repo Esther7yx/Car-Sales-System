@@ -1,6 +1,7 @@
 package com.carsale.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.carsale.annotation.RequiresRole;
 import com.carsale.entity.SaleOrder;
 import com.carsale.service.SaleOrderService;
 import com.carsale.utils.Result;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/sale-orders")
+@RequiresRole({"admin", "manager", "sales", "finance"})
 public class SaleOrderController {
 
     @Autowired

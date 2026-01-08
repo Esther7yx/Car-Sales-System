@@ -1,5 +1,6 @@
 package com.carsale.controller;
 
+import com.carsale.annotation.RequiresRole;
 import com.carsale.service.ReportService;
 import com.carsale.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/report")
+@RequiresRole({"admin", "manager", "finance"})
 public class ReportController {
 
     @Autowired

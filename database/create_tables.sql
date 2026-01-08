@@ -133,6 +133,7 @@ CREATE TABLE IF NOT EXISTS system_user (
     real_name VARCHAR(200) NOT NULL,
     role ENUM('admin', 'sales', 'warehouse', 'finance', 'manager') NOT NULL,
     status ENUM('active', 'inactive', 'locked') NOT NULL DEFAULT 'active',
+    last_login_time TIMESTAMP DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -188,4 +189,103 @@ INSERT INTO customer (customer_type, name, id_number, phone, email, address, cre
 
 -- 初始化管理员 (user_id 自动生成，通常为1)
 INSERT INTO system_user (username, password, real_name, role) VALUES
-    ('admin', '$2a$10$X/hX9.x/x.x/x.x/x.x/x.x/x.x/x', '管理员', 'admin');
+    ('admin', '123456', '管理员', 'admin'),
+    ('sales1', '123456', '销售员张三', 'sales'),
+    ('warehouse1', '123456', '库管员李四', 'warehouse'),
+    ('finance1', '123456', '财务员王五', 'finance'),
+    ('manager1', '123456', '经理赵六', 'manager');
+
+-- 创建仪表盘摘要视图
+CREATE OR REPLACE VIEW view_dashboard_summary AS
+SELECT
+    (SELECT COUNT(*) FROM customer) as customer_count,
+    (SELECT COUNT(*) FROM vehicle WHERE status = 'in_stock') as inventory_count,
+    (SELECT COUNT(*) FROM sale_order WHERE status = 'pending') as pending_order_count,
+    (SELECT SUM(total_amount) FROM sale_order WHERE status = 'paid' AND DATE(create_time) = CURDATE()) as today_sales_amount;
+
+-- 创建库存统计视图
+CREATE OR REPLACE VIEW view_stock_stats AS
+SELECT 
+    c.model_name as model_name,
+    m.manufacturer_name as manufacturer_name,
+    COUNT(v.vin) as quantity,
+    SUM(v.sale_price) as total_value
+FROM vehicle v
+JOIN car_model c ON v.model_id = c.model_id
+JOIN manufacturer m ON c.manufacturer_id = m.manufacturer_id
+WHERE v.status = 'in_stock'
+GROUP BY c.model_name, m.manufacturer_name
+ORDER BY quantity DESC;
+
+-- 创建销售趋势视图
+CREATE OR REPLACE VIEW view_sales_trend AS
+SELECT 
+    DATE(create_time) as sale_date,
+    COUNT(*) as order_count,
+    SUM(total_amount) as total_amount
+FROM sale_order
+WHERE status = 'paid'
+GROUP BY DATE(create_time)
+ORDER BY sale_date;
+
+-- 创建库存汇总视图
+CREATE OR REPLACE VIEW view_inventory_summary AS
+SELECT 
+    c.model_name as model_name,
+    m.manufacturer_name as manufacturer_name,
+    COUNT(v.vin) as quantity,
+    SUM(v.sale_price) as total_value
+FROM vehicle v
+JOIN car_model c ON v.model_id = c.model_id
+JOIN manufacturer m ON c.manufacturer_id = m.manufacturer_id
+GROUP BY c.model_name, m.manufacturer_name
+ORDER BY quantity DESC;
+
+-- 创建仓库明细视图
+CREATE OR REPLACE VIEW view_warehouse_details AS
+SELECT 
+    v.vin as vin,
+    c.model_name as model_name,
+    m.manufacturer_name as manufacturer_name,
+    v.purchase_price as purchase_price,
+    v.sale_price as sale_price,
+    v.status as status,
+    v.warehouse_location as warehouse_location,
+    v.purchase_date as entry_date,
+    v.sale_date as sale_date
+FROM vehicle v
+JOIN car_model c ON v.model_id = c.model_id
+JOIN manufacturer m ON c.manufacturer_id = m.manufacturer_id
+ORDER BY v.purchase_date DESC;
+
+-- 创建进销存统计视图
+CREATE OR REPLACE VIEW view_invoicing_stats AS
+SELECT 
+    DATE(create_time) as stats_date,
+    SUM(CASE WHEN type = 'in' THEN quantity ELSE 0 END) as in_quantity,
+    SUM(CASE WHEN type = 'out' THEN quantity ELSE 0 END) as out_quantity,
+    SUM(CASE WHEN type = 'in' THEN amount ELSE 0 END) as in_amount,
+    SUM(CASE WHEN type = 'out' THEN amount ELSE 0 END) as out_amount
+FROM (
+    -- 入库记录
+    SELECT 
+        purchase_date as create_time,
+        'in' as type,
+        1 as quantity,
+        purchase_price as amount
+    FROM vehicle
+    WHERE purchase_date IS NOT NULL
+    
+    UNION ALL
+    
+    -- 出库记录
+    SELECT 
+        sale_date as create_time,
+        'out' as type,
+        1 as quantity,
+        sale_price as amount
+    FROM vehicle
+    WHERE sale_date IS NOT NULL
+) t
+GROUP BY DATE(create_time)
+ORDER BY DATE(create_time);

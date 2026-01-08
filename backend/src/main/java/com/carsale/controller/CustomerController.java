@@ -1,5 +1,6 @@
 package com.carsale.controller;
 
+import com.carsale.annotation.RequiresRole;
 import com.carsale.entity.Customer;
 import com.carsale.service.CustomerService;
 import com.carsale.utils.Result;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers")
+@RequiresRole({"admin", "manager", "sales"})
 public class CustomerController {
 
     @Autowired

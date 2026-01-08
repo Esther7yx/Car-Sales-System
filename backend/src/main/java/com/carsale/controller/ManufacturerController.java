@@ -2,6 +2,7 @@ package com.carsale.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.carsale.annotation.RequiresRole;
 import com.carsale.entity.Manufacturer;
 import com.carsale.service.ManufacturerService;
 import com.carsale.utils.Result;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/manufacturer")
+@RequiresRole({"admin", "manager"})
 public class ManufacturerController {
 
     @Autowired

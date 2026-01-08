@@ -17,6 +17,10 @@ request.interceptors.request.use(
     if (userStore.token) {
       config.headers.Authorization = `Bearer ${userStore.token}`
     }
+    // 添加用户角色信息
+    if (userStore.userInfo && userStore.userInfo.role) {
+      config.headers['X-User-Role'] = userStore.userInfo.role
+    }
     return config
   },
   error => {
